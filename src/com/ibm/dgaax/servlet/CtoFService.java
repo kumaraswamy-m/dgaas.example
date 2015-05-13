@@ -16,15 +16,13 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class CtoFService {
 	
 	@GET
-	@Produces("application/xml")
+	@Produces("text/plain")
 	@ApiOperation(value = "Convert Celsius to Fahrenheit", notes = "More notes about this method", response = String.class)
 	@ApiResponses(value = {
 	  @ApiResponse(code = 400, message = "Invalid value") 
 	})
-	public String convertCtoF( @ApiParam(value = "Value in Celsius", required = true) @QueryParam(value="value")  double celsius) {
-
-		double fahrenheit = ((celsius * 9) / 5) + 32;
-		
-		return "<value>" + fahrenheit + "</value>";
+	public String convertCtoF( @ApiParam(value = "Value in Celsius", required = true) @QueryParam(value="value")  double celsius) 
+	{
+		return Double.toString( ((celsius * 9) / 5) + 32);
 	}
 }
