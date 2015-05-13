@@ -1,4 +1,4 @@
-package cm.ibm.dgaas.example;
+package com.ibm.dgaas.example;
 
 public class DGaaSExample {
 
