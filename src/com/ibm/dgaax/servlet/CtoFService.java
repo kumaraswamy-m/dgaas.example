@@ -12,7 +12,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/ctof")
-@Api(value = "/ctof", description = "Celsius to Fahrenheit")
+@Api( value = "/ctof", description = "Celsius to Fahrenheit")
 public class CtoFService {
 	
 	@GET
