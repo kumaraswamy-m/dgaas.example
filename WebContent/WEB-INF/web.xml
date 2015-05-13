@@ -13,6 +13,7 @@
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 
+<!-- 
 	<servlet>
 		<servlet-name>JerseyWebApp</servlet-name>
 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
@@ -22,11 +23,11 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>JerseyWebApp</servlet-name>
 		<url-pattern>/app/*</url-pattern>
 	</servlet-mapping>
-
 	<servlet>
 		<servlet-name>JerseyJaxrsConfig</servlet-name>
 		<servlet-class>com.wordnik.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
@@ -40,12 +41,13 @@
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
-	
+ -->
+ 
 	<filter>
 		<filter-name>CORSFilter</filter-name>
 		<filter-class>com.ibm.dgaax.servlet.CORSFilter</filter-class>
 	</filter>
-	
+
 	<filter-mapping>
 		<filter-name>CORSFilter</filter-name>
 		<url-pattern>/*</url-pattern>
