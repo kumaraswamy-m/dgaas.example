@@ -14,8 +14,10 @@ public class DGaaSXApplication extends Application
 	public DGaaSXApplication() 
 	{
 		BeanConfig beanConfig = new BeanConfig();
-		beanConfig.setVersion("1.0.1");
-		beanConfig.setBasePath("http://localhost:8080/dgaasx/app");
+		beanConfig.setContact("dragos.cojocari@ro.ibm.com");
+		beanConfig.setDescription("Document generation as a Service Example");
+		beanConfig.setVersion("1.0.0");
+		beanConfig.setBasePath("/app");
 		beanConfig.setResourcePackage( CtoFService.class.getPackage().getName());
 		beanConfig.setScan(true);
 	}
