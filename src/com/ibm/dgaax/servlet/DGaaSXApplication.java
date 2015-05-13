@@ -9,21 +9,21 @@ import javax.ws.rs.core.Application;
 import com.wordnik.swagger.jaxrs.config.BeanConfig;
 
 @ApplicationPath("/app")
-public class DGaaSXApplication extends Application 
+public class DGaaSXApplication extends Application
 {
-	public DGaaSXApplication() 
+	public DGaaSXApplication()
 	{
 		BeanConfig beanConfig = new BeanConfig();
 		beanConfig.setContact("dragos.cojocari@ro.ibm.com");
 		beanConfig.setDescription("Document generation as a Service Example");
 		beanConfig.setVersion("1.0.0");
 		beanConfig.setBasePath("http://dgaasx.mybluemix.net/app");
-		beanConfig.setResourcePackage( CtoFService.class.getPackage().getName());
+		beanConfig.setResourcePackage(CtoFService.class.getPackage().getName());
 		beanConfig.setScan(true);
 	}
 
 	@Override
-	public Set<Class<?>> getClasses() 
+	public Set<Class<?>> getClasses()
 	{
 		Set<Class<?>> resources = new HashSet<Class<?>>();
 
@@ -32,7 +32,7 @@ public class DGaaSXApplication extends Application
 		resources.add(com.wordnik.swagger.jersey.listing.ApiListingResourceJSON.class);
 		resources.add(com.wordnik.swagger.jersey.listing.JerseyResourceListingProvider.class);
 
-		resources.add( CtoFService.class);
+		resources.add(CtoFService.class);
 
 		return resources;
 	}

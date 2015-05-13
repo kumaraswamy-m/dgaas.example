@@ -18,9 +18,9 @@ public class CORSFilter implements Filter
 	private static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials"; //$NON-NLS-1$
 	private static final String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers"; //$NON-NLS-1$
 	private static final String ALL_DOMAINS = "*"; //$NON-NLS-1$
-	
+
 	private static final String CORS_DOMAINS = "CORS_DOMAINS"; //$NON-NLS-1$
-	
+
 	@Override
 	public void destroy()
 	{
@@ -30,22 +30,22 @@ public class CORSFilter implements Filter
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException
 	{
-		if ( res instanceof HttpServletResponse)
+		if (res instanceof HttpServletResponse)
 		{
-			String domains = System.getenv( CORS_DOMAINS);
-			if ( domains == null || domains.isEmpty())
+			String domains = System.getenv(CORS_DOMAINS);
+			if (domains == null || domains.isEmpty())
 			{
 				domains = ALL_DOMAINS;
 			}
-			
+
 			HttpServletResponse response = (HttpServletResponse) res;
-			response.setHeader( ACCESS_CONTROL_ALLOW_ORIGIN, domains);
-			response.setHeader( ACCESS_CONTROL_ALLOW_METHODS, ALL_METHODS);			
-			response.setHeader( ACCESS_CONTROL_ALLOW_CREDENTIALS, "true"); //$NON-NLS-1$
-			response.setHeader( ACCESS_CONTROL_ALLOW_HEADERS, "Origin,X-Requested-With,Content-Type,Accept,secret"); //$NON-NLS-1$
+			response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, domains);
+			response.setHeader(ACCESS_CONTROL_ALLOW_METHODS, ALL_METHODS);
+			response.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, "true"); //$NON-NLS-1$
+			response.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, "Origin,X-Requested-With,Content-Type,Accept,secret"); //$NON-NLS-1$
 		}
-		
-		chain.doFilter( req, res);
+
+		chain.doFilter(req, res);
 	}
 
 	@Override
