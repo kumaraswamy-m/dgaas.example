@@ -322,7 +322,7 @@ public class DocgenService
 		}
 		catch (Exception e)
 		{
-			log.debug("Could not create report", e);
+			log.error("Could not create report.", e);
 			return Response.status(Response.Status.BAD_REQUEST).entity("Could not create report").build();
 		}
 
@@ -339,7 +339,7 @@ public class DocgenService
 		}
 		catch (Exception e)
 		{
-			log.debug("Could not start docgen job", e);
+			log.error("Could not start docgen.", e);
 			return Response.status(Response.Status.BAD_REQUEST).entity("Could not start docgen job").build();
 		}
 
