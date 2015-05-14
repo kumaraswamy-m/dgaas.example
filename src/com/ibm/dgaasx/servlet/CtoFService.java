@@ -15,7 +15,6 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "/ctof", description = "Celsius to Fahrenheit")
 public class CtoFService
 {
-
 	@GET
 	@Produces("text/plain")
 	@ApiOperation(value = "Convert Celsius to Fahrenheit", notes = "More notes about this method", response = String.class)

@@ -11,17 +11,29 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/ctof")
-@Api(value = "/ctof", description = "Celsius to Fahrenheit")
+@Path("/add")
+@Api(value = "/add", description = "Math functions")
 public class MathService
 {
-
+	@Path("/sum")
 	@GET
 	@Produces("text/plain")
-	@ApiOperation(value = "Convert Celsius to Fahrenheit", notes = "More notes about this method", response = String.class)
+	@ApiOperation(value = "Add two numbers", notes = "More notes about this method", response = String.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public String convertCtoF(@ApiParam(value = "Value in Celsius", required = true) @QueryParam(value = "value") double celsius)
+	public String sum(@ApiParam(value = "Left operand", required = true) @QueryParam(value = "left") double left,
+					  @ApiParam(value = "Left operand", required = true) @QueryParam(value = "right") double right)
 	{
-		return Double.toString(((celsius * 9) / 5) + 32);
+		return Double.toString( left + right);
+	}
+	
+	@Path("/multiply")
+	@GET
+	@Produces("text/plain")
+	@ApiOperation(value = "Multiply two numbers", notes = "More notes about this method", response = String.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
+	public String multiply(@ApiParam(value = "Left operand", required = true) @QueryParam(value = "left") double left,
+					  @ApiParam(value = "Left operand", required = true) @QueryParam(value = "right") double right)
+	{
+		return Double.toString( left * right);
 	}
 }

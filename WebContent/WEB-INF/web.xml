@@ -19,7 +19,7 @@
 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>com.ibm.dgaax.servlet;com.wordnik.swagger.jersey.listing</param-value>
+			<param-value>com.ibm.dgaasx.servlet;com.wordnik.swagger.jersey.listing</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
@@ -45,7 +45,7 @@
  
 	<filter>
 		<filter-name>CORSFilter</filter-name>
-		<filter-class>com.ibm.dgaax.servlet.CORSFilter</filter-class>
+		<filter-class>com.ibm.dgaasx.servlet.CORSFilter</filter-class>
 	</filter>
 
 	<filter-mapping>

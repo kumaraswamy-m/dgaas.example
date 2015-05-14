@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import com.ibm.dgaasx.config.EnvironmentInfo;
 import com.wordnik.swagger.jaxrs.config.BeanConfig;
 
 @ApplicationPath("/api")
@@ -17,7 +18,7 @@ public class DGaaSXApplication extends Application
 		beanConfig.setContact("dragos.cojocari@ro.ibm.com");
 		beanConfig.setDescription("Document generation as a Service Example");
 		beanConfig.setVersion("1.0.0");
-		beanConfig.setBasePath("http://dgaasx.mybluemix.net/api");
+		beanConfig.setBasePath(EnvironmentInfo.getBaseURL());
 		beanConfig.setResourcePackage(CtoFService.class.getPackage().getName());
 		beanConfig.setScan(true);
 	}
@@ -33,6 +34,8 @@ public class DGaaSXApplication extends Application
 		resources.add(com.wordnik.swagger.jersey.listing.JerseyResourceListingProvider.class);
 
 		resources.add(CtoFService.class);
+		resources.add(MathService.class);
+		resources.add(DocgenService.class);
 
 		return resources;
 	}
