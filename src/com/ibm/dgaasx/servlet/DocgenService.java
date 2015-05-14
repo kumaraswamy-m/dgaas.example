@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -95,13 +96,13 @@ public class DocgenService
 	public static final class JobInfo
 	{
 		public String id = null;
-		public String href = null;
+		//public String href = null;
 		public String secret = null;
 		
 		public JobInfo( String id, String href, String secret)
 		{
 			this.id = id;
-			this.href = href;
+			//this.href = href;
 			this.secret = secret;
 		}
 	}
@@ -113,7 +114,7 @@ public class DocgenService
 		MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
 
 		ModifyData modifyData = new ModifyData();
-		modifyData.setUrl("http://localhost:8080/dgaasx/data/requisitepro.dta");
+		modifyData.setUrl("http://localhost:8080/dgaasx/data/newsfeed.dta");
 
 		List<ModifyData> templateData = new ArrayList<ModifyData>();
 		templateData.add(modifyData);
@@ -136,7 +137,7 @@ public class DocgenService
 		{
 			for (ReportDataSource ds : template.getDataSources())
 			{
-				ds.setProperty("URI", "http://localhost:8080/dgaasx/data/requisitepro.xml");
+				ds.setProperty("URI", "http://feeds.bbci.co.uk/news/rss.xml");
 			}
 		}
 
@@ -243,14 +244,14 @@ public class DocgenService
 	
 	
 	@GET
-	@Path( "/job")
+	@Path( "/job/{jobID}")
 	@Produces( MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get information about a document generation job", notes = "More notes about this method", response = DocgenJob.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response job( @ApiParam(value = "URL of the result as returned in the job info", required = true)  @QueryParam(value="jobURL") String jobURL, 
+	public Response job( @ApiParam(value = "The id of the job as returned by the docgen method", required = true)  @PathParam(value="jobID") String jobID, 
 						 @ApiParam(value = "Job secret as returned by the docgen method", required = true)   @QueryParam(value="secret") String secret)
 	{
-		WebResource jobService = client.resource(UriBuilder.fromUri(jobURL).build());
+		WebResource jobService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSURL()).path("/data/jobs").path( jobID).build());
 		
 		ClientResponse response = jobService.header(Parameters.Header.SECRET, secret).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 		if ( !checkResponse( response))
@@ -264,14 +265,14 @@ public class DocgenService
 	}
 	
 	@GET
-	@Path( "/result")
+	@Path( "/result/{resultID}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@ApiOperation(value = "Download the a generated document", notes = "More notes about this method", response = String.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response result( @ApiParam(value = "URL of the result as returned in the job info", required = true)  @QueryParam(value="resultURL") String resultURL, 
+	public Response result( @ApiParam(value = "URL of the result as returned in the job info", required = true)  @PathParam(value="resultID") String resultID, 
 							@ApiParam(value = "Job secret as returned by the docgen method", required = true)   @QueryParam(value="secret") String secret)
 	{
-		WebResource resultService = client.resource(UriBuilder.fromUri(resultURL).build());
+		WebResource resultService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSURL()).path("/data/files").path( resultID).build());
 		
 		ClientResponse response = resultService.header(Parameters.Header.SECRET,secret).type(MediaType.APPLICATION_OCTET_STREAM).get(ClientResponse.class); 
 		if ( !checkResponse( response))
@@ -310,7 +311,7 @@ public class DocgenService
 	@Produces( MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Request a document to be produced by DGaaS", notes = "More notes about this method", response = JobInfo.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response docgen() throws IOException
+	public Response docgen(@ApiParam(value = "A secret to secure the document generation with", required = false)   @QueryParam(value="secret") String secret) throws IOException
 	{
 		String dgaasURL = EnvironmentInfo.getDGaaSURL();
 
@@ -329,6 +330,11 @@ public class DocgenService
 		try
 		{
 			DocgenConfiguration configuration = new DocgenConfiguration(dgaasURL, report);
+			if ( secret!=null && !secret.trim().isEmpty())
+			{
+				configuration.secret = secret.trim();
+			}
+			
 			jobInfo = runReport(configuration);
 		}
 		catch (Exception e)
