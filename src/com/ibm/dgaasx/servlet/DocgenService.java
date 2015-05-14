@@ -43,6 +43,7 @@ import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
@@ -226,9 +227,10 @@ public class DocgenService
 	@GET
 	@Path( "/job")
 	@Produces( MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get information about a document generation job", notes = "More notes about this method", response = String.class)
+	@ApiOperation(value = "Get information about a document generation job", notes = "More notes about this method", response = Object.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response job( @QueryParam(value="jobURL") String jobURL, @QueryParam(value="secret") String secret)
+	public Response job( @ApiParam(value = "URL of the result as returned in the job info", required = true)  @QueryParam(value="jobURL") String jobURL, 
+						 @ApiParam(value = "Job secret as returned by the docgen method", required = true)   @QueryParam(value="secret") String secret)
 	{
 		WebResource jobService = client.resource(UriBuilder.fromUri(jobURL).build());
 		
@@ -243,9 +245,10 @@ public class DocgenService
 	@GET
 	@Path( "/result")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@ApiOperation(value = "Download the result of a document generation job", notes = "More notes about this method", response = String.class)
+	@ApiOperation(value = "Download the a generated document", notes = "More notes about this method", response = OutputStream.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response result( @QueryParam(value="resultURL") String resultURL, @QueryParam(value="secret") String secret)
+	public Response result( @ApiParam(value = "URL of the result as returned in the job info", required = true)  @QueryParam(value="resultURL") String resultURL, 
+							@ApiParam(value = "Job secret as returned by the docgen method", required = true)   @QueryParam(value="secret") String secret)
 	{
 		WebResource resultService = client.resource(UriBuilder.fromUri(resultURL).build());
 		
@@ -271,8 +274,8 @@ public class DocgenService
 	
 
 	@POST
-	@Produces("text/plain")
-	@ApiOperation(value = "Request a document to be produced by DGaaS", notes = "More notes about this method", response = String.class)
+	@Produces( MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Request a document to be produced by DGaaS", notes = "More notes about this method", response = Object.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
 	public Response docgen() throws IOException
 	{
