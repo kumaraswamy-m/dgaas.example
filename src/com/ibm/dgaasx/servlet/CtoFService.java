@@ -1,4 +1,4 @@
-package com.ibm.dgaax.servlet;
+package com.ibm.dgaasx.servlet;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

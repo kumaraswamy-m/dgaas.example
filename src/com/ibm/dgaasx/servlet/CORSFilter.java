@@ -1,4 +1,4 @@
-package com.ibm.dgaax.servlet;
+package com.ibm.dgaasx.servlet;
 
 import java.io.IOException;
 
