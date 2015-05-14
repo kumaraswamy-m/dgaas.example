@@ -246,7 +246,7 @@ public class DocgenService
 	@GET
 	@Path( "/job/{jobID}")
 	@Produces( MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Request information about a document generation job", notes = "Request information on a document generation job. The information return consists of job status, events and if the job is finished, the results.", response = DocgenJob.class, produces="application/json")
+	@ApiOperation(value = "Request information for a document generation job", notes = "Request information for a document generation job using the job's ID and the secret token. The information return consists of job status, events and if the job is finished, the results.", response = DocgenJob.class, produces="application/json")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value"), @ApiResponse(code = 404, message = "Job information cannot be retrieved. Verify the ID and secret.") })
 	public Response job( @ApiParam(value = "The id of the job as returned by the /docgen method", required = true)  @PathParam(value="jobID") String jobID, 
 						 @ApiParam(value = "Job secret as returned by the /docgen method", required = true)   @QueryParam(value="secret") String secret)
@@ -267,7 +267,7 @@ public class DocgenService
 	@GET
 	@Path( "/result/{resultID}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@ApiOperation(value = "Download the a generated document", notes = "Download a generated document.", response=OutputStream.class, produces="application/octet-stream" )
+	@ApiOperation(value = "Download the document produced by DGaaS.", notes = "Download the document produced by DGaaS using the result's URI and the secret token.", response=OutputStream.class, produces="application/octet-stream" )
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value"), @ApiResponse(code = 404, message = "Result cannot be retrieved. Verify the ID and secret.") })
 	public Response result( @ApiParam(value = "The URI of the result as returned by the /job method", required = true)  @PathParam(value="resultID") String resultID, 
 							@ApiParam(value = "Job secret as returned by the /docgen method", required = true)   @QueryParam(value="secret") String secret)
