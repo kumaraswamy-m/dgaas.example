@@ -8,7 +8,7 @@ import javax.ws.rs.core.Application;
 
 import com.wordnik.swagger.jaxrs.config.BeanConfig;
 
-@ApplicationPath("/app")
+@ApplicationPath("/api")
 public class DGaaSXApplication extends Application
 {
 	public DGaaSXApplication()
@@ -17,7 +17,7 @@ public class DGaaSXApplication extends Application
 		beanConfig.setContact("dragos.cojocari@ro.ibm.com");
 		beanConfig.setDescription("Document generation as a Service Example");
 		beanConfig.setVersion("1.0.0");
-		beanConfig.setBasePath("http://dgaasx.mybluemix.net/app");
+		beanConfig.setBasePath("http://dgaasx.mybluemix.net/api");
 		beanConfig.setResourcePackage(CtoFService.class.getPackage().getName());
 		beanConfig.setScan(true);
 	}
