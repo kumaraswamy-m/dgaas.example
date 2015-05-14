@@ -114,7 +114,7 @@ public class DocgenService
 		MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
 
 		ModifyData modifyData = new ModifyData();
-		modifyData.setUrl("http://localhost:8080/dgaasx/data/newsfeed.dta");
+		modifyData.setUrl( EnvironmentInfo.getBaseURL()+"/data/newsfeed.dta");
 
 		List<ModifyData> templateData = new ArrayList<ModifyData>();
 		templateData.add(modifyData);
