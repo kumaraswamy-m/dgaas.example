@@ -246,7 +246,7 @@ public class DocgenService
 	@GET
 	@Path( "/job/{jobID}")
 	@Produces( MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get information about a document generation job", notes = "More notes about this method", response = DocgenJob.class)
+	@ApiOperation(value = "Get information about a document generation job", notes = "More notes about this method", response = DocgenJob.class, produces="application/json")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
 	public Response job( @ApiParam(value = "The id of the job as returned by the docgen method", required = true)  @PathParam(value="jobID") String jobID, 
 						 @ApiParam(value = "Job secret as returned by the docgen method", required = true)   @QueryParam(value="secret") String secret)
@@ -267,7 +267,7 @@ public class DocgenService
 	@GET
 	@Path( "/result/{resultID}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@ApiOperation(value = "Download the a generated document", notes = "More notes about this method", response = String.class)
+	@ApiOperation(value = "Download the a generated document", notes = "More notes about this method", response=OutputStream.class, produces="application/octet-stream" )
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
 	public Response result( @ApiParam(value = "URL of the result as returned in the job info", required = true)  @PathParam(value="resultID") String resultID, 
 							@ApiParam(value = "Job secret as returned by the docgen method", required = true)   @QueryParam(value="secret") String secret)
@@ -309,7 +309,7 @@ public class DocgenService
 
 	@POST
 	@Produces( MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Request a document to be produced by DGaaS", notes = "More notes about this method", response = JobInfo.class)
+	@ApiOperation(value = "Request a document to be produced by DGaaS", notes = "More notes about this method", response = JobInfo.class, produces="application/json")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
 	public Response docgen(@ApiParam(value = "A secret to secure the document generation with", required = false)   @QueryParam(value="secret") String secret) throws IOException
 	{
