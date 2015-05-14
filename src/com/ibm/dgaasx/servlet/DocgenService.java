@@ -1,20 +1,27 @@
 package com.ibm.dgaasx.servlet;
 
 import java.io.IOException;
-import java.net.URI;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.JAXBException;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +30,6 @@ import com.ibm.dgaasx.utils.ConnectionUtils;
 import com.ibm.dgaasx.utils.JSONUtils;
 import com.ibm.rpe.web.service.docgen.api.Parameters;
 import com.ibm.rpe.web.service.docgen.api.model.DocgenJob;
-import com.ibm.rpe.web.service.docgen.api.model.DocgenJob.ReportResult;
 import com.ibm.rpe.web.service.docgen.api.model.ModifyData;
 import com.ibm.rpe.web.service.docgen.api.model.Report;
 import com.ibm.rpe.web.service.docgen.api.model.ReportTemplate;
@@ -48,6 +54,8 @@ public class DocgenService
 
 	public static final String TEMPLATE_DATA = "templateData";
 	public static final String NEW_OUTPUT = "newOutput";
+	
+	private Client client = ConnectionUtils.createClient();
 
 	public static final class DocgenConfiguration
 	{
@@ -86,8 +94,6 @@ public class DocgenService
 
 	private Report buildReport(String dgaasURL) throws IOException
 	{
-		Client client = ConnectionUtils.createClient();
-
 		WebResource dgaas = client.resource(UriBuilder.fromUri(dgaasURL).build());
 
 		MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
@@ -123,31 +129,24 @@ public class DocgenService
 		return report;
 	}
 
-	protected boolean handleResponse(String jobID, ClientResponse response)
+	protected boolean handleResponse(ClientResponse response)
 	{
 		if (!response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL))
 		{
-			logJobMessage(jobID, ">>> ERROR: " + response.getStatusInfo().getStatusCode());
-			logJobMessage(jobID, ">>> Reason phrase: " + response.getStatusInfo().getReasonPhrase());
-			logJobMessage(jobID, ">>> Details: " + response.getEntity(String.class));
+			log.info( ">>> ERROR: " + response.getStatusInfo().getStatusCode());
+			log.info( ">>> Reason phrase: " + response.getStatusInfo().getReasonPhrase());
+			log.info( ">>> Details: " + response.getEntity(String.class));
 		}
 
 		return Response.Status.Family.SUCCESSFUL == response.getStatusInfo().getFamily();
 	}
 
-	private void logJobMessage(String jobid, String message)
-	{
-		log.info(jobid + ": " + message);
-	}
-
-	protected String runReport(DocgenConfiguration dgaasConfig) throws ClientHandlerException, UniformInterfaceException, IOException, JAXBException
+	protected Map<String, String> runReport(DocgenConfiguration dgaasConfig) throws ClientHandlerException, UniformInterfaceException, IOException, JAXBException
 	{
 		if (dgaasConfig.secret == null)
 		{
 			dgaasConfig.secret = Long.toString(System.currentTimeMillis());
 		}
-
-		Client client = ConnectionUtils.createClient();
 
 		WebResource dgaas = client.resource(UriBuilder.fromUri(dgaasConfig.dgaasURL).build());
 
@@ -203,131 +202,79 @@ public class DocgenService
 
 		}
 
-		logJobMessage("", "Starting docgen ...");
+		log.info( "Starting docgen ...");
 
 		ClientResponse response = dgaas.path("docgen").header(Parameters.Header.SECRET, dgaasConfig.secret).accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, runData);
-		handleResponse("-", response);
+		handleResponse(response);
 
 		String jobJSON = response.getEntity(String.class);
 		DocgenJob job = (DocgenJob) JSONUtils.fromJSON(jobJSON, DocgenJob.class);
 
 		String jobID = job.getID();
-		logJobMessage(jobID, ">>> JOB ID: " + jobID);
-		logJobMessage(jobID, ">>> JOB URL: " + job.getHref());
+		log.info( ">>> JOB ID: " + jobID);
+		log.info( ">>> JOB URL: " + job.getHref());
 
-		/*
-		long eventFrom = 0;
-		long shownEvents = 0;
-		String lastStatus = "";
-		while (true)
-		{
-			response = jobService.path(jobID).queryParam("eventfrom", Long.toString(eventFrom)).header(Parameters.Header.SECRET, dgaasConfig.secret).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-			handleResponse(jobID, response);
-
-			jobJSON = response.getEntity(String.class);
-
-			job = (DocgenJob) JSONUtils.fromJSON(jobJSON, DocgenJob.class);
-			if (Response.Status.OK.getStatusCode() != response.getStatus())
-			{
-				break;
-			}
-
-			int curPos = 0;
-			for (String event : job.getEvents())
-			{
-				// if the service cannot respond with paged events, show only
-				// the new events
-				if (curPos >= shownEvents)
-				{
-					logJobMessage(jobID, "\t" + event);
-					++shownEvents;
-				}
-
-				++curPos;
-			}
-
-			if (!lastStatus.equals(job.getStatus()))
-			{
-				logJobMessage(jobID, ">>> Status: " + job.getStatus());
-				lastStatus = job.getStatus();
-			}
-
-			// inc event pos
-			eventFrom = eventFrom + job.getEvents().size();
-
-			try
-			{
-				Thread.sleep(100);
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-
-			if (job.getStatus().equals("finished") || job.getStatus().equals("error"))
-			{
-				break;
-			}
-		}
-
-		// read the results from the storage service
-		if (job.getStatus().equals("finished"))
-		{
-			for (ReportResult result : job.getResults())
-			{
-				// setup the access to the resource
-				String resultURL = null;
-
-				logJobMessage(jobID, "Result URI: " + result.getURI());
-
-				if (URI.create(result.getURI()).isAbsolute())
-				{
-					resultURL = result.getURI();
-				}
-				else
-				{
-					resultURL = fileService.getURI().toString() + "/" + result.getURI();
-				}
-
-				logJobMessage(jobID, "Result URL: " + resultURL);
-
-			
-			}
-		}
-*/
+		Map<String, String> result = new HashMap<String, String>();
+		result.put( "id", job.getID());
+		result.put( "href", job.getHref());
+		result.put( "secret", dgaasConfig.secret);
 		
-		return job.getHref();
+		return result;
 	}
-
-	/*
-	 * WebResource resultResource =
-	 * client.resource(UriBuilder.fromUri(resultURL).build());
-	 * 
-	 * if ( dgaasConfig.fileServiceUser != null) {
-	 * resultResource.addFilter(new
-	 * HTTPBasicAuthFilter(dgaasConfig.fileServiceUser,
-	 * dgaasConfig.fileServicePassword)); }
-	 * 
-	 * response = resultResource.header(Parameters.Header.SECRET,
-	 * dgaasConfig
-	 * .secret).type(MediaType.APPLICATION_OCTET_STREAM).get
-	 * (ClientResponse.class); handleResponse(response);
-	 * 
-	 * InputStream is = response.getEntityInputStream();
-	 * 
-	 * File localFile = new File("d:\\tmp\\results\\" +
-	 * result.getName()); localFile.getParentFile().mkdirs();
-	 * IOUtils.copy(is, new FileOutputStream(localFile));
-	 * 
-	 * logJobMessage( jobID, "File downloaded to: " +
-	 * localFile.getAbsolutePath());
-	 */
 	
+	
+	@GET
+	@Path( "/job")
+	@Produces( MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Get information about a document generation job", notes = "More notes about this method", response = String.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
+	public Response job( @QueryParam(value="jobURL") String jobURL, @QueryParam(value="secret") String secret)
+	{
+		WebResource jobService = client.resource(UriBuilder.fromUri(jobURL).build());
+		
+		ClientResponse response = jobService.header(Parameters.Header.SECRET, secret).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+		handleResponse( response);
+		
+		String jobJSON = response.getEntity(String.class);
+		
+		return Response.ok().entity( jobJSON).build();
+	}
+	
+	@GET
+	@Path( "/result")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@ApiOperation(value = "Download the result of a document generation job", notes = "More notes about this method", response = String.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
+	public Response result( @QueryParam(value="resultURL") String resultURL, @QueryParam(value="secret") String secret)
+	{
+		WebResource resultService = client.resource(UriBuilder.fromUri(resultURL).build());
+		
+		ClientResponse response = resultService.header(Parameters.Header.SECRET,secret).type(MediaType.APPLICATION_OCTET_STREAM).get(ClientResponse.class); 
+		handleResponse( response);
+		
+		final InputStream is = response.getEntityInputStream();
+		
+		// OR: use a custom StreamingOutput and set to Response
+		StreamingOutput stream = new StreamingOutput() 
+		{
+			@Override
+			public void write(OutputStream output) throws IOException
+			{
+				IOUtils.copy(is, output);
+			}
+		};
+
+		String name = "xyz.doc";
+
+		return Response.ok(stream, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + name).build(); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+
 	@POST
 	@Produces("text/plain")
 	@ApiOperation(value = "Request a document to be produced by DGaaS", notes = "More notes about this method", response = String.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response docgen()
+	public Response docgen() throws IOException
 	{
 		String dgaasURL = EnvironmentInfo.getDGaaSURL();
 
@@ -342,11 +289,11 @@ public class DocgenService
 			return Response.status(Response.Status.BAD_REQUEST).entity("Could not create report").build();
 		}
 
-		String docgenURL = null;
+		Map<String, String> jobInfo = null;
 		try
 		{
 			DocgenConfiguration configuration = new DocgenConfiguration(dgaasURL, report);
-			docgenURL = runReport(configuration);
+			jobInfo = runReport(configuration);
 		}
 		catch (Exception e)
 		{
@@ -354,6 +301,6 @@ public class DocgenService
 			return Response.status(Response.Status.BAD_REQUEST).entity("Could not create report").build();
 		}
 
-		return Response.ok().entity(docgenURL).build();
+		return Response.ok().entity( JSONUtils.writeValue(jobInfo)).build();
 	}
 }
