@@ -13,6 +13,6 @@ public class EnvironmentInfo
 	{
 		String baseURL = System.getenv( "base.url");
 		
-		return baseURL == null || baseURL.isEmpty() ? "http://dgaasx.mybluemix.net/api" : baseURL; 
+		return baseURL == null || baseURL.isEmpty() ? "http://dgaasx.mybluemix.net" : baseURL; 
 	}
 }

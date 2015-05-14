@@ -18,7 +18,7 @@ public class DGaaSXApplication extends Application
 		beanConfig.setContact("dragos.cojocari@ro.ibm.com");
 		beanConfig.setDescription("Document generation as a Service Example");
 		beanConfig.setVersion("1.0.0");
-		beanConfig.setBasePath(EnvironmentInfo.getBaseURL());
+		beanConfig.setBasePath(EnvironmentInfo.getBaseURL() + "/api");
 		beanConfig.setResourcePackage(CtoFService.class.getPackage().getName());
 		beanConfig.setScan(true);
 	}
