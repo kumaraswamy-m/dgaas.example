@@ -248,15 +248,15 @@ public class DocgenService
 	@Produces( MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get information about a document generation job", notes = "More notes about this method", response = DocgenJob.class, produces="application/json")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response job( @ApiParam(value = "The id of the job as returned by the docgen method", required = true)  @PathParam(value="jobID") String jobID, 
-						 @ApiParam(value = "Job secret as returned by the docgen method", required = true)   @QueryParam(value="secret") String secret)
+	public Response job( @ApiParam(value = "The id of the job as returned by the /docgen method", required = true)  @PathParam(value="jobID") String jobID, 
+						 @ApiParam(value = "Job secret as returned by the /docgen method", required = true)   @QueryParam(value="secret") String secret)
 	{
 		WebResource jobService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSURL()).path("/data/jobs").path( jobID).build());
 		
 		ClientResponse response = jobService.header(Parameters.Header.SECRET, secret).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 		if ( !checkResponse( response))
 		{
-			return Response.status(Response.Status.NOT_FOUND).entity("Job information cannot be retrieved. Check your URL and secret token.").build();
+			return Response.status(Response.Status.NOT_FOUND).entity("Job information cannot be retrieved. Verify the ID and secret.").build();
 		}
 		
 		String jobJSON = response.getEntity(String.class);
@@ -269,15 +269,15 @@ public class DocgenService
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@ApiOperation(value = "Download the a generated document", notes = "More notes about this method", response=OutputStream.class, produces="application/octet-stream" )
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response result( @ApiParam(value = "URL of the result as returned in the job info", required = true)  @PathParam(value="resultID") String resultID, 
-							@ApiParam(value = "Job secret as returned by the docgen method", required = true)   @QueryParam(value="secret") String secret)
+	public Response result( @ApiParam(value = "The URI of the result as returned by the /job method", required = true)  @PathParam(value="resultID") String resultID, 
+							@ApiParam(value = "Job secret as returned by the /docgen method", required = true)   @QueryParam(value="secret") String secret)
 	{
 		WebResource resultService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSURL()).path("/data/files").path( resultID).build());
 		
 		ClientResponse response = resultService.header(Parameters.Header.SECRET,secret).type(MediaType.APPLICATION_OCTET_STREAM).get(ClientResponse.class); 
 		if ( !checkResponse( response))
 		{
-			return Response.status(Response.Status.NOT_FOUND).entity("Job information cannot be retrieved. Check your URL and secret token.").build();
+			return Response.status(Response.Status.NOT_FOUND).entity("Result information cannot be retrieved. Verify the ID and secret.").build();
 		}
 		
 		String contentDisposition = response.getHeaders().getFirst( CONTENT_DISPOSITION);
