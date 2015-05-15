@@ -35,7 +35,7 @@ function monitorReport( jobURL)
 			{
 			    $( "#progressbar" ).progressbar({value: 5});
 			    
-		   		$( "#download_result").attr('href', "/dgaasx/result/" + job.jobid);
+		   		$( "#download_result").attr('href', "/dgaasx/api/result/" + job.results[0].uri);
 			   
 				$( "#results_dialog" ).dialog({
 						modal:true,
@@ -80,12 +80,9 @@ function runReport( rssURL)
 {
 	$.ajax({
 		type: "POST",
-		url: "/dgaasx/api/rss2pdf",
+		url: "/dgaasx/api/rss2pdf?rss="+rssURL,
 		xhrFields: {
 			 withCredentials: true
-		},
-		data: {
-			rss: rssURL
 		},
 		dataType: "json",
 		success: function (job) {

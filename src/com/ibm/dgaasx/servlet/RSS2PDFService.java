@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -183,7 +182,7 @@ public class RSS2PDFService extends BasicService
 	@Produces( MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Convert an RSS 2.0 feed to PDF", notes = "Uses a predefined template to produce a PDF document rendering the news feed.", response = DocgenJob.class, produces="application/json")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response rss2pdf( @ApiParam(value = "The RSS Feed to convert to PDF", required = false)  @FormParam(value="rss") String rss,
+	public Response rss2pdf( @ApiParam(value = "The RSS Feed to convert to PDF", required = false)  @QueryParam(value="rss") String rss,
 							 @ApiParam(value = "A secret to secure the document generation with", required = false) @QueryParam(value="secret") String secret) throws IOException
 	{
 		String dgaasURL = EnvironmentInfo.getDGaaSURL();

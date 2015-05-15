@@ -72,4 +72,7 @@ table {
 
 #results_dialog {
     display: none;
+    position: absolute;
+    top: 100;
+    left:100;
 }
