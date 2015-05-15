@@ -50,15 +50,12 @@ function monitorReport( jobURL)
 							}
 						}
 						]
-				}).parent().position({ my: 'center', at: 'center', of: '#rpeng_container' });
+				}).parent().position({ my: 'center', at: 'center', of: '#centerDiv' });
 			}
-			else if ( job.status.toUpperCase() == "FAILED")
+			else if ( job.status.toUpperCase() == "FAILED" || job.status.toUpperCase() == "ERROR")
 			{
-				$( "#progresstext" ).html( "Ready ...");
+				$( "#progresstext" ).html( "An error has ocurred. Please try again.");
 				$( "#progressbar" ).progressbar({value: 0});
-				updateLastRun(job.reporturl);
-				
-				alert( "Document generation failed");
 			}
 			else
 			{
@@ -84,14 +81,14 @@ function runReport( rssURL)
 		xhrFields: {
 			 withCredentials: true
 		},
+		data : {},
 		dataType: "json",
 		success: function (job) {
 			if(typeof job !== "object") {
 				console.error("Data returned is in invalid format.");
 				return;
 			}
-			
-			console.log( JSON.stringify(job ));
+
 			setTimeout( function(){ monitorReport( "/dgaasx/api/job/" +job.id);}, 1000);
 		},
 		error: function(error, status)
@@ -103,10 +100,10 @@ function runReport( rssURL)
 }
 
 
-function generateDocument() {
+function generateDocument( rssURL) {
 
 	$( "#progresstext").html("Starting ...");
-	runReport( );
+	runReport( rssURL);
 }
 
 
@@ -114,14 +111,12 @@ function initialize()
 {
 	//baseURL = document.getElementById("dgaasx.js").src;
 	//baseURL = baseURL.substr( 0, baseURL.indexOf("/dgaasx.js"));
-	url = document.getElementById("rss").value;
-	
-	console.log( "URL" +  url)
+	var rssURL = document.getElementById("rss").value;
 
 	//jobsURL = baseURL + "/api/job";
 	//resultsURL = baseURL + "/api/result";
 	
-	$( "#generate").click(function() { generateDocument( url);});
+	$( "#generate").click(function() { generateDocument( rssURL);});
 	$( "#progressbar" ).progressbar({value: 0,max:5});
 }
 

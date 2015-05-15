@@ -1,18 +1,27 @@
 #centerDiv {
 	XXX-position: absolute;
 	width: 500px;
-	z-index: 15;
+	XXX-z-index: 15;
 	XXX-top: 30%;
 	XXX-left: 35%;
 	XXX-margin: -100px 0 0 -150px;
-	XXX-border: 1px solid;
-	XXX-border-radius: 10px;
+	border: 1px solid;
+	border-radius: 3px;
 	XXX-box-shadow: 10px 10px 5px #888888;
 	padding: 10px;
+	background-color: WhiteSmoke;
+}
+
+.smaller
+{
+	maergin-top: 0px;
+	font-size: 12px;
+	font-family: Arial;
+	font-style: italic;
 }
 
 #rss {
-	width: 350px
+	width: 370px;
 }
 
 input, select {
@@ -20,28 +29,24 @@ input, select {
 	margin: 0;
 }
 
+button
+{
+    font-weight: bold;	
+}
+
 html, body {
 	height: 100%;
 }
 
-table, th, td {
-	border: 0px solid black;
+body, strong, b, em, i, label, input,p, button {
 	font-size: 12px;
 	font-family: Arial;
 }
 
-a, p {
-	font-size: 12px;
-	font-family: Arial;
-}
-
-body, strong, b, em, i, label, input {
-	font-size: 14px;
-	font-family: Arial;
-}
-
-table {
-	border-collapse: collapse
+H3
+{
+	color: DarkRed;
+	font-size: 16px;
 }
 
 #jobdetails
@@ -53,26 +58,27 @@ table {
     border-width: 1px;
 }
 
+#wrapper {
+    text-align: center;
+    width: 100%;
+    
+}
+
 #progressbar
 {
 	width: 100%;
-	display: inline-block;
-	text-align: center;	
+	height:25px;
+	text-align: center;
 }
 
 #progresstext
 {
-	text-align: center;	
-}
-
-.wrapper {
+	text-align: center;
     text-align: center;
-    width: 100%;
+    margin-top: -20px;
+    font-weight: bold;
 }
 
 #results_dialog {
     display: none;
-    position: absolute;
-    top: 100;
-    left:100;
 }

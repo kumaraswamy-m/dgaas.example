@@ -21,8 +21,11 @@
 <body onload="initialize();">
 
 	<div id="centerDiv">
-		 <div align="center"><h3>RSS 2 PDF</h3></div>
-		<br/>
+		<div align="center">
+			<h3>RSS 2 PDF</h3>
+			<p class="smaller">Create a snapshot of your favourite RSS feed in PDF format</p>
+		</div>
+		
 		
 		<label style="margin-right: 10px">RSS Feed: </label>
 		<input id="rss" name="rss"  type="text" value="http://www.npr.org/rss/rss.php?id=1001"/>
@@ -31,12 +34,11 @@
 		<br/>
 		<br/>
 		
-		<div class="wrapper">
+		<div id="wrapper">
 			<div id="progressbar"></div>
 			<div id="progresstext">Ready ...</div>
 		</div>
 		
-		<br/>
 		<p><small>Built on DGaaS 1.0</small></p>
 		
 		<div id="results_dialog" title="PDF Ready" style="text-align: center; margin: 15px;display: none">
