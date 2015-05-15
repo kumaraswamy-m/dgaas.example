@@ -20,9 +20,10 @@ public class DGaaSXApplication extends Application
 		beanConfig.setContact("dragos.cojocari@ro.ibm.com");
 		beanConfig.setDescription( "This API is an example of using DGaaS (Document Generation as a Service) and produces PDF documents from RSS 2.0 feeds." +
 								   "<br/><br/>The procedure is:" +
-								   "<ol><li>Invoke /dgasaax/api/rss2pdf with the RSS feed you want to convert to PDF.</li>"+
-								   "<li>monitor the process at /dgasaax/api/job/<jobid> returned by the first call.</li>"+
-								   "<li>access the PDF at /dgasaax/api/result/<resultid> if the job completes succesfully ( the status of the job becomes finished).</li>"+
+								   "<ol>"+
+								   "<li>Invoke /dgasaax/api/rss2pdf with the RSS feed you want to convert to PDF. Optionally provide a secret token to secure your operation.</li>"+
+								   "<li>Monitor the process at /dgasaax/api/job/<jobid> using the jobid returned by the first call. Pass the same secret token you used in #1.</li>"+
+								   "<li>Once the job completes succesfully ( the status of the job becomes finished) access the PDF at /dgasaax/api/result/<resulturi>. Pass the same secret token you used in #1.</li>"+
 								   "</ol>" + 
 								   "<br/>The source code is hosted on Github at <a href='https://github.com/dgaas/dgaas.example'>https://github.com/dgaas/dgaas.example</a>. For questions and support please see the Contact the Developer link."+
 								   "<br/>");
