@@ -12,13 +12,15 @@ import com.wordnik.swagger.jaxrs.config.BeanConfig;
 @ApplicationPath("/api")
 public class DGaaSXApplication extends Application
 {
+	private static final String API = "/api";
+
 	public DGaaSXApplication()
 	{
 		BeanConfig beanConfig = new BeanConfig();
 		beanConfig.setContact("dragos.cojocari@ro.ibm.com");
 		beanConfig.setDescription("Document generation as a Service Example");
 		beanConfig.setVersion("1.0.0");
-		beanConfig.setBasePath(EnvironmentInfo.getBaseURL() + "/api");
+		beanConfig.setBasePath(EnvironmentInfo.getBaseURL() + API);
 		beanConfig.setResourcePackage(CtoFService.class.getPackage().getName());
 		beanConfig.setScan(true);
 	}
@@ -36,6 +38,8 @@ public class DGaaSXApplication extends Application
 		resources.add(CtoFService.class);
 		resources.add(MathService.class);
 		resources.add(RSS2PDFService.class);
+		resources.add(JobProxyService.class);
+		resources.add(ResultProxyService.class);
 
 		return resources;
 	}
