@@ -1,0 +1,75 @@
+#centerDiv {
+	XXX-position: absolute;
+	width: 500px;
+	z-index: 15;
+	XXX-top: 30%;
+	XXX-left: 35%;
+	XXX-margin: -100px 0 0 -150px;
+	XXX-border: 1px solid;
+	XXX-border-radius: 10px;
+	XXX-box-shadow: 10px 10px 5px #888888;
+	padding: 10px;
+}
+
+#rss {
+	width: 350px
+}
+
+input, select {
+	padding: 1px;
+	margin: 0;
+}
+
+html, body {
+	height: 100%;
+}
+
+table, th, td {
+	border: 0px solid black;
+	font-size: 12px;
+	font-family: Arial;
+}
+
+a, p {
+	font-size: 12px;
+	font-family: Arial;
+}
+
+body, strong, b, em, i, label, input {
+	font-size: 14px;
+	font-family: Arial;
+}
+
+table {
+	border-collapse: collapse
+}
+
+#jobdetails
+{
+	width:100%;
+	height: 300px;
+	margin-top:10px;
+	border-style: solid;
+    border-width: 1px;
+}
+
+#progressbar
+{
+	width: 100%;
+	display: inline-block;
+	text-align: center;	
+}
+
+#progresstext
+{
+	text-align: center;	
+}
+
+.wrapper {
+    text-align: center;
+    width: 100%;
+}
+
+#results_dialog {
+    display: none;
+}
