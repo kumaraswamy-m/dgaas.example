@@ -59,7 +59,7 @@ public class ResultProxyService
 	@ApiOperation(value = "Download the document produced by DGaaS.", notes = "Download the document produced by DGaaS using the result's URI and the secret token.", response=OutputStream.class, produces="application/octet-stream" )
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value"), @ApiResponse(code = 404, message = "Result cannot be retrieved. Verify the ID and secret.") })
 	public Response result( @ApiParam(value = "The URI of the result as returned by the /job method", required = true)  @PathParam(value="resultID") String resultID, 
-							@ApiParam(value = "Job secret as returned by the /docgen method", required = true)   @QueryParam(value="secret") String secret)
+							@ApiParam(value = "The document generation job secret token.", required = false)   @QueryParam(value="secret") String secret)
 	{
 		WebResource resultService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSURL()).path("/data/files").path( resultID).build());
 		

@@ -13,7 +13,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +65,7 @@ public class RSS2PDFService
 		public String fileServicePassword = null;
 
 		public String jobid = null;
-		public String secret = UUID.randomUUID().toString();
+		public String secret = null;
 
 		public int previewLimit = 0;
 
@@ -85,22 +84,7 @@ public class RSS2PDFService
 		}
 	}
 
-	@XmlRootElement
-	public static final class JobInfo
-	{
-		public String id = null;
-		//public String href = null;
-		public String secret = null;
-		
-		public JobInfo( String id, String href, String secret)
-		{
-			this.id = id;
-			//this.href = href;
-			this.secret = secret;
-		}
-	}
-	
-	private Report buildReport(String dgaasURL, String dataSoure) throws IOException
+	private Report buildReport(String dgaasURL, String dataSoure) throws Exception
 	{
 		WebResource dgaas = client.resource(UriBuilder.fromUri(dgaasURL).build());
 
@@ -113,7 +97,7 @@ public class RSS2PDFService
 		templateData.add(modifyData);
 
 		formData.add(TEMPLATE_DATA, JSONUtils.writeValue(templateData));
-		formData.add(NEW_OUTPUT, "Word");
+		//formData.add(NEW_OUTPUT, "Word");
 		formData.add(NEW_OUTPUT, "PDF");
 
 		// create the report
@@ -121,7 +105,7 @@ public class RSS2PDFService
 		String reportJSON = response.getEntity(String.class);
 		if (Response.Status.OK.getStatusCode() != response.getStatus())
 		{
-			// /throw new Exception("Could not create report");
+			throw new Exception("Could not create report");
 		}
 
 		// modify the report, set the data source URI
@@ -149,13 +133,8 @@ public class RSS2PDFService
 		return Response.Status.Family.SUCCESSFUL == response.getStatusInfo().getFamily();
 	}
 
-	protected JobInfo runReport(DocgenConfiguration dgaasConfig) throws Exception
+	protected String runReport(DocgenConfiguration dgaasConfig) throws Exception
 	{
-		if (dgaasConfig.secret == null)
-		{
-			dgaasConfig.secret = Long.toString(System.currentTimeMillis());
-		}
-
 		WebResource dgaas = client.resource(UriBuilder.fromUri(dgaasConfig.dgaasURL).build());
 
 		// start dogen
@@ -219,30 +198,26 @@ public class RSS2PDFService
 		}
 
 		String jobJSON = response.getEntity(String.class);
+		
+		/*
 		DocgenJob job = (DocgenJob) JSONUtils.fromJSON(jobJSON, DocgenJob.class);
 
 		String jobID = job.getID();
-		log.info( ">>> JOB ID: " + jobID);
-		log.info( ">>> JOB URL: " + job.getHref());
+		log.info( "JOB ID: " + jobID);
+		log.info( "JOB URL: " + job.getHref());
 
-		/*
-		Map<String, String> result = new HashMap<String, String>();
-		result.put( "id", job.getID());
-		result.put( "href", job.getHref());
-		result.put( "secret", dgaasConfig.secret);
+		return new JobInfo( job.getID(), job.getHref(), dgaasConfig.secret);
 		*/
 		
-		return new JobInfo( job.getID(), job.getHref(), dgaasConfig.secret);
+		return jobJSON;
 	}
-	
-	
 
 	@POST
 	@Produces( MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Convert an RSS 2.0 feed to PDF", notes = "Uses a predefined template to produce a PDF document rendering the news feed.", response = JobInfo.class, produces="application/json")
+	@ApiOperation(value = "Convert an RSS 2.0 feed to PDF", notes = "Uses a predefined template to produce a PDF document rendering the news feed.", response = DocgenJob.class, produces="application/json")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response rss2pdf( @ApiParam(value = "The RSS Feed to convert to PDF", required = false)   @QueryParam(value="rss") String rss,
-							 @ApiParam(value = "A secret to secure the document generation with", required = false)   @QueryParam(value="secret") String secret) throws IOException
+	public Response rss2pdf( @ApiParam(value = "The RSS Feed to convert to PDF", required = false)  @QueryParam(value="rss") String rss,
+							 @ApiParam(value = "A secret to secure the document generation with", required = false) @QueryParam(value="secret") String secret) throws IOException
 	{
 		String dgaasURL = EnvironmentInfo.getDGaaSURL();
 
@@ -257,7 +232,7 @@ public class RSS2PDFService
 			return Response.status(Response.Status.BAD_REQUEST).entity("Could not create report").build();
 		}
 
-		JobInfo jobInfo = null;
+		String jobJSON = null;
 		try
 		{
 			DocgenConfiguration configuration = new DocgenConfiguration(dgaasURL, report);
@@ -266,7 +241,7 @@ public class RSS2PDFService
 				configuration.secret = secret.trim();
 			}
 			
-			jobInfo = runReport(configuration);
+			jobJSON = runReport(configuration);
 		}
 		catch (Exception e)
 		{
@@ -274,6 +249,6 @@ public class RSS2PDFService
 			return Response.status(Response.Status.BAD_REQUEST).entity("Could not start docgen job").build();
 		}
 
-		return Response.ok().entity( JSONUtils.writeValue(jobInfo)).build();
+		return Response.ok().entity( jobJSON).build();
 	}
 }

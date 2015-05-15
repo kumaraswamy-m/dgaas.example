@@ -11,6 +11,6 @@ public class EnvironmentInfo
 	public static final String getBaseURL()
 	{
 		String baseURL = System.getenv( "base.url");
-		return baseURL == null || baseURL.isEmpty() ? "http://dgaas-service.stage1.mybluemix.net" : baseURL; 
+		return baseURL == null || baseURL.isEmpty() ? "http://giediprime.cluj.ro.ibm.com:9080/dgaasx" : baseURL; 
 	}
 }

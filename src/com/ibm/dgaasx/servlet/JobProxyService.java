@@ -51,7 +51,7 @@ public class JobProxyService
 	@ApiOperation(value = "Request information for a document generation job", notes = "Request information for a document generation job using the job's ID and the secret token. The information return consists of job status, events and if the job is finished, the results.", response = DocgenJob.class, produces="application/json")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value"), @ApiResponse(code = 404, message = "Job information cannot be retrieved. Verify the ID and secret.") })
 	public Response job( @ApiParam(value = "The id of the job as returned by the /docgen method", required = true)  @PathParam(value="jobID") String jobID, 
-						 @ApiParam(value = "Job secret as returned by the /docgen method", required = true)   @QueryParam(value="secret") String secret)
+						 @ApiParam(value = "The document generation job secret token.", required = false)   @QueryParam(value="secret") String secret)
 	{
 		
 		WebResource jobService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSURL()).path("/data/jobs").path( jobID).build());
