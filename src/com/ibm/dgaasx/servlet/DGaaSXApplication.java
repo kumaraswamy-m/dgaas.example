@@ -25,10 +25,11 @@ public class DGaaSXApplication extends Application
 								   "<li>access the PDF at /dgasaax/api/result/<resultid> if the job completes succesfully ( the status of the job becomes finished).</li>"+
 								   "</ol>" + 
 								   "<br/>For questions and support please see the Contact the Developer link."+
-								   "<br/><br/>The source code is hosted on Github at <a href='https://github.com/dgaas/dgaas.example'>https://github.com/dgaas/dgaas.example</a>.");
+								   "<br/>The source code is hosted on Github at <a href='https://github.com/dgaas/dgaas.example'>https://github.com/dgaas/dgaas.example</a>."+
+								   "<br/>");
 		beanConfig.setVersion("1.0.0");
 		beanConfig.setBasePath(EnvironmentInfo.getBaseURL() + API);
-		beanConfig.setResourcePackage(CtoFService.class.getPackage().getName());
+		beanConfig.setResourcePackage(RSS2PDFService.class.getPackage().getName());
 		beanConfig.setScan(true);
 	}
 
