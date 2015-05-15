@@ -24,8 +24,7 @@ public class DGaaSXApplication extends Application
 								   "<li>monitor the process at /dgasaax/api/job/<jobid> returned by the first call.</li>"+
 								   "<li>access the PDF at /dgasaax/api/result/<resultid> if the job completes succesfully ( the status of the job becomes finished).</li>"+
 								   "</ol>" + 
-								   "<br/>For questions and support please see the Contact the Developer link."+
-								   "<br/>The source code is hosted on Github at <a href='https://github.com/dgaas/dgaas.example'>https://github.com/dgaas/dgaas.example</a>."+
+								   "<br/>The source code is hosted on Github at <a href='https://github.com/dgaas/dgaas.example'>https://github.com/dgaas/dgaas.example</a>. For questions and support please see the Contact the Developer link."+
 								   "<br/>");
 		beanConfig.setVersion("1.0.0");
 		beanConfig.setBasePath(EnvironmentInfo.getBaseURL() + API);
