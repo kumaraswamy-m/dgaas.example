@@ -35,7 +35,7 @@ public class DGaaSXApplication extends Application
 
 		resources.add(CtoFService.class);
 		resources.add(MathService.class);
-		resources.add(DocgenService.class);
+		resources.add(RSS2PDFService.class);
 
 		return resources;
 	}

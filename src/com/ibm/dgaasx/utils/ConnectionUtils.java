@@ -34,7 +34,6 @@ public class ConnectionUtils
             return true;
         }
     }
-	
 	private static TrustManager[] certs = new TrustManager[]
 	{
 		new X509TrustManager()
@@ -97,5 +96,4 @@ public class ConnectionUtils
 		
 		return Client.create(config);
 	}
-
 }

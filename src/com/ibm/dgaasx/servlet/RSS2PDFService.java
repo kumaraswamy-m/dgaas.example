@@ -1,26 +1,20 @@
 package com.ibm.dgaasx.servlet;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,16 +38,15 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/docgen")
-@Api(value = "/docgen", description = "Document generation functionality")
-public class DocgenService
+@Path("/rss2pdf")
+@Api(value = "/rss2pdf", description = "Service for rendering an RSS 2.0 feed in PDF.")
+public class RSS2PDFService
 {
-	private final static Logger log = LoggerFactory.getLogger(DocgenService.class);
+	private final static Logger log = LoggerFactory.getLogger(RSS2PDFService.class);
 	
 	private static final String TEMPLATE_DATA = "templateData";
 	private static final String NEW_OUTPUT = "newOutput";
-	private static final String CONTENT_DISPOSITION = "Content-Disposition";
-	private static final String CONTENT_DISPOSITION_FILENAME = "filename = ";
+	private static final String BBC_NEW_FEED = "http://feeds.bbci.co.uk/news/rss.xml";
 	
 	private Client client = ConnectionUtils.createClient();
 
@@ -107,7 +100,7 @@ public class DocgenService
 		}
 	}
 	
-	private Report buildReport(String dgaasURL) throws IOException
+	private Report buildReport(String dgaasURL, String dataSoure) throws IOException
 	{
 		WebResource dgaas = client.resource(UriBuilder.fromUri(dgaasURL).build());
 
@@ -137,7 +130,7 @@ public class DocgenService
 		{
 			for (ReportDataSource ds : template.getDataSources())
 			{
-				ds.setProperty("URI", "http://feeds.bbci.co.uk/news/rss.xml");
+				ds.setProperty("URI", dataSoure == null || dataSoure.trim().isEmpty() ? BBC_NEW_FEED : dataSoure);
 			}
 		}
 
@@ -243,82 +236,20 @@ public class DocgenService
 	}
 	
 	
-	@GET
-	@Path( "/job/{jobID}")
-	@Produces( MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Request information for a document generation job", notes = "Request information for a document generation job using the job's ID and the secret token. The information return consists of job status, events and if the job is finished, the results.", response = DocgenJob.class, produces="application/json")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value"), @ApiResponse(code = 404, message = "Job information cannot be retrieved. Verify the ID and secret.") })
-	public Response job( @ApiParam(value = "The id of the job as returned by the /docgen method", required = true)  @PathParam(value="jobID") String jobID, 
-						 @ApiParam(value = "Job secret as returned by the /docgen method", required = true)   @QueryParam(value="secret") String secret)
-	{
-		WebResource jobService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSURL()).path("/data/jobs").path( jobID).build());
-		
-		ClientResponse response = jobService.header(Parameters.Header.SECRET, secret).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-		if ( !checkResponse( response))
-		{
-			return Response.status(Response.Status.NOT_FOUND).entity("Job information cannot be retrieved. Verify the ID and secret.").build();
-		}
-		
-		String jobJSON = response.getEntity(String.class);
-		
-		return Response.ok().entity( jobJSON).build();
-	}
-	
-	@GET
-	@Path( "/result/{resultID}")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@ApiOperation(value = "Download the document produced by DGaaS.", notes = "Download the document produced by DGaaS using the result's URI and the secret token.", response=OutputStream.class, produces="application/octet-stream" )
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value"), @ApiResponse(code = 404, message = "Result cannot be retrieved. Verify the ID and secret.") })
-	public Response result( @ApiParam(value = "The URI of the result as returned by the /job method", required = true)  @PathParam(value="resultID") String resultID, 
-							@ApiParam(value = "Job secret as returned by the /docgen method", required = true)   @QueryParam(value="secret") String secret)
-	{
-		WebResource resultService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSURL()).path("/data/files").path( resultID).build());
-		
-		ClientResponse response = resultService.header(Parameters.Header.SECRET,secret).type(MediaType.APPLICATION_OCTET_STREAM).get(ClientResponse.class); 
-		if ( !checkResponse( response))
-		{
-			return Response.status(Response.Status.NOT_FOUND).entity("Result cannot be retrieved. Verify the ID and secret.").build();
-		}
-		
-		String contentDisposition = response.getHeaders().getFirst( CONTENT_DISPOSITION);
-		String fileName = "result";
-		if ( contentDisposition != null)
-		{
-			int pos = contentDisposition.indexOf(CONTENT_DISPOSITION_FILENAME);
-			if ( pos >= 0)
-			{
-				fileName = contentDisposition.substring( pos + CONTENT_DISPOSITION_FILENAME.length());
-			}
-		}
-		
-		final InputStream is = response.getEntityInputStream();
-		
-		// OR: use a custom StreamingOutput and set to Response
-		StreamingOutput stream = new StreamingOutput() 
-		{
-			@Override
-			public void write(OutputStream output) throws IOException
-			{
-				IOUtils.copy(is, output);
-			}
-		};
-
-		return Response.ok(stream, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build(); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
 
 	@POST
 	@Produces( MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Request a document to be produced by DGaaS", notes = "Uses a predefined template to produce a Word and PDF document rendering of the BBC new feed.", response = JobInfo.class, produces="application/json")
+	@ApiOperation(value = "Convert an RSS 2.0 feed to PDF", notes = "Uses a predefined template to produce a PDF document rendering the news feed.", response = JobInfo.class, produces="application/json")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response docgen(@ApiParam(value = "A secret to secure the document generation with", required = false)   @QueryParam(value="secret") String secret) throws IOException
+	public Response rss2pdf( @ApiParam(value = "The RSS Feed to convert to PDF", required = false)   @QueryParam(value="rss") String rss,
+							 @ApiParam(value = "A secret to secure the document generation with", required = false)   @QueryParam(value="secret") String secret) throws IOException
 	{
 		String dgaasURL = EnvironmentInfo.getDGaaSURL();
 
 		Report report = null;
 		try
 		{
-			report = buildReport(dgaasURL);
+			report = buildReport(dgaasURL, rss);
 		}
 		catch (Exception e)
 		{
