@@ -3,7 +3,6 @@ package com.ibm.dgaasx.servlet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,11 +13,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ibm.dgaasx.config.EnvironmentInfo;
-import com.ibm.dgaasx.utils.ConnectionUtils;
 import com.ibm.dgaasx.utils.JSONUtils;
 import com.ibm.rpe.web.service.docgen.api.Parameters;
 import com.ibm.rpe.web.service.docgen.api.model.DocgenJob;
@@ -26,7 +21,6 @@ import com.ibm.rpe.web.service.docgen.api.model.ModifyData;
 import com.ibm.rpe.web.service.docgen.api.model.Report;
 import com.ibm.rpe.web.service.docgen.api.model.ReportTemplate;
 import com.ibm.rpe.web.service.docgen.api.model.ReportTemplate.ReportDataSource;
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
@@ -39,16 +33,12 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/rss2pdf")
 @Api(value = "/rss2pdf", description = "Service for rendering an RSS 2.0 feed in PDF.")
-public class RSS2PDFService
+public class RSS2PDFService extends BasicService
 {
-	private final static Logger log = LoggerFactory.getLogger(RSS2PDFService.class);
-	
 	private static final String TEMPLATE_DATA = "templateData";
 	private static final String NEW_OUTPUT = "newOutput";
 	private static final String BBC_NEW_FEED = "http://feeds.bbci.co.uk/news/rss.xml";
 	
-	private Client client = ConnectionUtils.createClient();
-
 	public static final class DocgenConfiguration
 	{
 		public String dgaasURL = null;
@@ -121,18 +111,6 @@ public class RSS2PDFService
 		return report;
 	}
 
-	protected boolean checkResponse(ClientResponse response)
-	{
-		if (Response.Status.Family.SUCCESSFUL != response.getStatusInfo().getFamily())
-		{
-			log.info( ">>> ERROR: " + response.getStatusInfo().getStatusCode());
-			log.info( ">>> Reason phrase: " + response.getStatusInfo().getReasonPhrase());
-			log.info( ">>> Details: " + response.getEntity(String.class));
-		}
-
-		return Response.Status.Family.SUCCESSFUL == response.getStatusInfo().getFamily();
-	}
-
 	protected String runReport(DocgenConfiguration dgaasConfig) throws Exception
 	{
 		WebResource dgaas = client.resource(UriBuilder.fromUri(dgaasConfig.dgaasURL).build());
@@ -197,19 +175,7 @@ public class RSS2PDFService
 			throw new Exception("Cannot start document generation");
 		}
 
-		String jobJSON = response.getEntity(String.class);
-		
-		/*
-		DocgenJob job = (DocgenJob) JSONUtils.fromJSON(jobJSON, DocgenJob.class);
-
-		String jobID = job.getID();
-		log.info( "JOB ID: " + jobID);
-		log.info( "JOB URL: " + job.getHref());
-
-		return new JobInfo( job.getID(), job.getHref(), dgaasConfig.secret);
-		*/
-		
-		return jobJSON;
+		return response.getEntity(String.class);
 	}
 
 	@POST

@@ -9,14 +9,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ibm.dgaasx.config.EnvironmentInfo;
-import com.ibm.dgaasx.utils.ConnectionUtils;
 import com.ibm.rpe.web.service.docgen.api.Parameters;
 import com.ibm.rpe.web.service.docgen.api.model.DocgenJob;
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.wordnik.swagger.annotations.Api;
@@ -27,24 +22,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/job")
 @Api(value = "/job", description = "A proxy to the Job Service used by DGaaS")
-public class JobProxyService
+public class JobProxyService extends BasicService
 {
-	private final static Logger log = LoggerFactory.getLogger(JobProxyService.class);
-	
-	private Client client = ConnectionUtils.createClient();
-
-	protected boolean checkResponse(ClientResponse response)
-	{
-		if (Response.Status.Family.SUCCESSFUL != response.getStatusInfo().getFamily())
-		{
-			log.info( ">>> ERROR: " + response.getStatusInfo().getStatusCode());
-			log.info( ">>> Reason phrase: " + response.getStatusInfo().getReasonPhrase());
-			log.info( ">>> Details: " + response.getEntity(String.class));
-		}
-
-		return Response.Status.Family.SUCCESSFUL == response.getStatusInfo().getFamily();
-	}
-	
 	@GET
 	@Path( "/{jobID}")
 	@Produces( MediaType.APPLICATION_JSON)
