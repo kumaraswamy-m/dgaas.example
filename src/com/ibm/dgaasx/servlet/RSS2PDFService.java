@@ -101,12 +101,14 @@ public class RSS2PDFService extends BasicService
 									.header(Parameters.BluemixHeader.INSTANCEID, info.getInstanceID())
 									.header(Parameters.BluemixHeader.REGION, info.getRegion())
 									.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, formData);
-		String reportJSON = response.getEntity(String.class);
+		
 		if ( !checkResponse( response))
 		{
 			throw new Exception("Could not create report");
 		}
 
+		String reportJSON = response.getEntity(String.class);
+		
 		// modify the report, set the data source URI
 		Report report = (Report) JSONUtils.fromJSON(reportJSON, Report.class);
 		for (ReportTemplate template : report.getTemplates())
