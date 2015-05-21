@@ -100,7 +100,6 @@ function runReport( rssURL)
 	});
 }
 
-
 function generateDocument() {
 
 	var rssURL = document.getElementById("rss").value;
@@ -108,16 +107,8 @@ function generateDocument() {
 	runReport( rssURL);
 }
 
-
 function initialize() 
 {
-	//baseURL = document.getElementById("dgaasx.js").src;
-	//baseURL = baseURL.substr( 0, baseURL.indexOf("/dgaasx.js"));
-	
-
-	//jobsURL = baseURL + "/api/job";
-	//resultsURL = baseURL + "/api/result";
-	
 	$( "#generate").click(function() { generateDocument();});
 	$( "#progressbar" ).progressbar({value: 0,max:5});
 }
