@@ -28,7 +28,14 @@
 		
 		
 		<label style="margin-right: 10px">RSS Feed: </label>
-		<input id="rss" name="rss"  type="text" value="http://www.npr.org/rss/rss.php?id=1001"/>
+		<input id="rss" name="rss"  type="text" value="http://www.npr.org/rss/rss.php?id=1001" list="Defaults"/>
+		
+		<datalist id="Defaults">
+    		<option value="http://feeds.bbci.co.uk/news/world/rss.xml">BBC News World</option>
+    		<option value="http://www.npr.org/rss/rss.php?id=1001">NPR</option>
+    		<option value="http://www.reddit.com/.rss">Reddit</option>
+		</datalist>
+
 		<button id="generate" style="margin-top:10px">PDF</button>
 		
 		<br/>

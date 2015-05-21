@@ -101,8 +101,9 @@ function runReport( rssURL)
 }
 
 
-function generateDocument( rssURL) {
+function generateDocument() {
 
+	var rssURL = document.getElementById("rss").value;
 	$( "#progresstext").html("Starting ...");
 	runReport( rssURL);
 }
@@ -112,12 +113,12 @@ function initialize()
 {
 	//baseURL = document.getElementById("dgaasx.js").src;
 	//baseURL = baseURL.substr( 0, baseURL.indexOf("/dgaasx.js"));
-	var rssURL = document.getElementById("rss").value;
+	
 
 	//jobsURL = baseURL + "/api/job";
 	//resultsURL = baseURL + "/api/result";
 	
-	$( "#generate").click(function() { generateDocument( rssURL);});
+	$( "#generate").click(function() { generateDocument();});
 	$( "#progressbar" ).progressbar({value: 0,max:5});
 }
 
