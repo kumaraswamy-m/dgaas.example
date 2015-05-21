@@ -15,12 +15,6 @@ public class EnvironmentInfo
 		return DGAAS_INFO;
 	}
 	
-	public static final String getBaseURL()
-	{
-		String baseURL = System.getenv( "base.url");
-		return baseURL == null || baseURL.isEmpty() ? "http://localhost:8080/dgaasx" : baseURL; 
-	}
-	
 	public static final DGaaSInfo parseVCAPS()
 	{
 		DGaaSInfo info = new DGaaSInfo();

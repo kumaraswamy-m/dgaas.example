@@ -6,7 +6,6 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import com.ibm.dgaasx.config.EnvironmentInfo;
 import com.wordnik.swagger.jaxrs.config.BeanConfig;
 
 @ApplicationPath("/api")
@@ -28,7 +27,7 @@ public class DGaaSXApplication extends Application
 								   "<br/>The source code is hosted on Github at <a href='https://github.com/dgaas/dgaas.example'>https://github.com/dgaas/dgaas.example</a>. For questions and support please see the Contact the Developer link."+
 								   "<br/>");
 		beanConfig.setVersion("1.0.0");
-		beanConfig.setBasePath(EnvironmentInfo.getBaseURL() + API);
+		beanConfig.setBasePath(API);
 		beanConfig.setResourcePackage(RSS2PDFService.class.getPackage().getName());
 		beanConfig.setScan(true);
 	}

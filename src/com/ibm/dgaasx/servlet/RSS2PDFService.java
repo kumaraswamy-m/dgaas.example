@@ -1,6 +1,7 @@
 package com.ibm.dgaasx.servlet;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,10 +9,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import com.ibm.dgaasx.config.DGaaSInfo;
 import com.ibm.dgaasx.config.EnvironmentInfo;
@@ -80,14 +83,14 @@ public class RSS2PDFService extends BasicService
 		}
 	}
 
-	private Report buildReport(DGaaSInfo info, String dataSoure) throws Exception
+	private Report buildReport( URI baseURI, DGaaSInfo info, String dataSoure) throws Exception
 	{
 		WebResource dgaas = client.resource(UriBuilder.fromUri(info.getURL()).build());
 
 		MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
 
 		ModifyData modifyData = new ModifyData();
-		modifyData.setUrl( EnvironmentInfo.getBaseURL()+"/data/newsfeed.dta");
+		modifyData.setUrl( baseURI.resolve("../data/newsfeed.dta").toString());
 
 		List<ModifyData> templateData = new ArrayList<ModifyData>();
 		templateData.add(modifyData);
@@ -197,7 +200,8 @@ public class RSS2PDFService extends BasicService
 	@Produces( MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Convert an RSS 2.0 feed to PDF", notes = "Uses a predefined template to produce a PDF document rendering the news feed.", response = DocgenJob.class, produces="application/json")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid value") })
-	public Response rss2pdf( @ApiParam(value = "The RSS Feed to convert to PDF", required = false)  @QueryParam(value="rss") String rss,
+	public Response rss2pdf( @Context UriInfo uriInfo,
+							 @ApiParam(value = "The RSS Feed to convert to PDF", required = false)  @QueryParam(value="rss") String rss,
 							 @ApiParam(value = "A secret to secure the document generation with", required = false) @QueryParam(value="secret") String secret) throws IOException
 	{
 		DGaaSInfo info = EnvironmentInfo.getDGaaSInfo();
@@ -205,7 +209,7 @@ public class RSS2PDFService extends BasicService
 		Report report = null;
 		try
 		{
-			report = buildReport( info, rss);
+			report = buildReport( uriInfo.getBaseUri(), info, rss);
 		}
 		catch (Exception e)
 		{
