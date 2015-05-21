@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import com.ibm.dgaasx.config.DGaaSInfo;
 import com.ibm.dgaasx.config.EnvironmentInfo;
 import com.ibm.rpe.web.service.docgen.api.Parameters;
 import com.ibm.rpe.web.service.docgen.api.model.DocgenJob;
@@ -33,9 +34,15 @@ public class JobProxyService extends BasicService
 						 @ApiParam(value = "The document generation job secret token.", required = false)   @QueryParam(value="secret") String secret)
 	{
 		
-		WebResource jobService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSInfo().getURL()).path("/data/jobs").path( jobID).build());
+		DGaaSInfo info = EnvironmentInfo.getDGaaSInfo();
 		
-		ClientResponse response = jobService.header(Parameters.Header.SECRET, secret).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+		WebResource jobService = client.resource(UriBuilder.fromUri( info.getURL()).path("/data/jobs").path( jobID).build());
+		
+		ClientResponse response = jobService.header(Parameters.Header.SECRET, secret)
+									.header(Parameters.BluemixHeader.INSTANCEID, info.getInstanceID())
+									.header(Parameters.BluemixHeader.REGION, info.getRegion())
+									.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+		
 		if ( !checkResponse( response))
 		{
 			return Response.status(Response.Status.NOT_FOUND).entity("Job information cannot be retrieved. Verify the ID and secret.").build();

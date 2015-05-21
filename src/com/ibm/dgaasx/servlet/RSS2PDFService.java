@@ -13,6 +13,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import com.ibm.dgaasx.config.DGaaSInfo;
 import com.ibm.dgaasx.config.EnvironmentInfo;
 import com.ibm.dgaasx.utils.JSONUtils;
 import com.ibm.rpe.web.service.docgen.api.Parameters;
@@ -41,7 +42,7 @@ public class RSS2PDFService extends BasicService
 	
 	public static final class DocgenConfiguration
 	{
-		public String dgaasURL = null;
+		public DGaaSInfo info = null;
 		public Report report = null;
 
 		public String jobsServiceURL = null;
@@ -59,24 +60,29 @@ public class RSS2PDFService extends BasicService
 
 		public int previewLimit = 0;
 
-		public DocgenConfiguration(String dgaasURL, Report report)
+		public DocgenConfiguration(DGaaSInfo info, Report report)
 		{
-			this.dgaasURL = dgaasURL;
+			this.info = info;
 			this.report = report;
 		}
 
-		public DocgenConfiguration(String dgaasURL, Report report, String jobsServiceURL, String fileServiceURL)
+		public DocgenConfiguration(DGaaSInfo info, Report report, String jobsServiceURL, String fileServiceURL)
 		{
-			this.dgaasURL = dgaasURL;
+			this.info = info;
 			this.report = report;
 			this.jobsServiceURL = jobsServiceURL;
 			this.fileServiceURL = fileServiceURL;
 		}
+		
+		public DGaaSInfo getDGaaSInfo()
+		{
+			return info;
+		}
 	}
 
-	private Report buildReport(String dgaasURL, String dataSoure) throws Exception
+	private Report buildReport(DGaaSInfo info, String dataSoure) throws Exception
 	{
-		WebResource dgaas = client.resource(UriBuilder.fromUri(dgaasURL).build());
+		WebResource dgaas = client.resource(UriBuilder.fromUri(info.getURL()).build());
 
 		MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
 
@@ -91,7 +97,10 @@ public class RSS2PDFService extends BasicService
 		formData.add(NEW_OUTPUT, "PDF");
 
 		// create the report
-		ClientResponse response = dgaas.path("builder").path("change").accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, formData);
+		ClientResponse response = dgaas.path("builder").path("change")
+									.header(Parameters.BluemixHeader.INSTANCEID, info.getInstanceID())
+									.header(Parameters.BluemixHeader.REGION, info.getRegion())
+									.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, formData);
 		String reportJSON = response.getEntity(String.class);
 		if ( !checkResponse( response))
 		{
@@ -113,7 +122,7 @@ public class RSS2PDFService extends BasicService
 
 	protected String runReport(DocgenConfiguration dgaasConfig) throws Exception
 	{
-		WebResource dgaas = client.resource(UriBuilder.fromUri(dgaasConfig.dgaasURL).build());
+		WebResource dgaas = client.resource(UriBuilder.fromUri( dgaasConfig.getDGaaSInfo().getURL()).build());
 
 		// start dogen
 		MultivaluedMap<String, String> runData = new MultivaluedMapImpl();
@@ -128,7 +137,7 @@ public class RSS2PDFService extends BasicService
 		}
 		else
 		{
-			jobService = client.resource(UriBuilder.fromUri(dgaasConfig.dgaasURL + "/data/jobs").build());
+			jobService = client.resource(UriBuilder.fromUri(dgaasConfig.getDGaaSInfo().getURL() + "/data/jobs").build());
 		}
 
 		WebResource fileService = null;
@@ -139,7 +148,7 @@ public class RSS2PDFService extends BasicService
 		}
 		else
 		{
-			fileService = client.resource(UriBuilder.fromUri(dgaasConfig.dgaasURL + "/data/files").build());
+			fileService = client.resource(UriBuilder.fromUri(dgaasConfig.getDGaaSInfo().getURL() + "/data/files").build());
 		}
 
 		if (dgaasConfig.jobid != null)
@@ -169,7 +178,11 @@ public class RSS2PDFService extends BasicService
 
 		log.info( "Starting docgen ...");
 
-		ClientResponse response = dgaas.path("docgen").header(Parameters.Header.SECRET, dgaasConfig.secret).accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, runData);
+		ClientResponse response = dgaas.path("docgen")
+								.header(Parameters.Header.SECRET, dgaasConfig.secret)
+								.header(Parameters.BluemixHeader.INSTANCEID, dgaasConfig.info.getInstanceID())
+								.header(Parameters.BluemixHeader.REGION, dgaasConfig.info.getRegion())
+								.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, runData);
 		if ( !checkResponse( response))
 		{
 			throw new Exception("Cannot start document generation");
@@ -185,12 +198,12 @@ public class RSS2PDFService extends BasicService
 	public Response rss2pdf( @ApiParam(value = "The RSS Feed to convert to PDF", required = false)  @QueryParam(value="rss") String rss,
 							 @ApiParam(value = "A secret to secure the document generation with", required = false) @QueryParam(value="secret") String secret) throws IOException
 	{
-		String dgaasURL = EnvironmentInfo.getDGaaSInfo().getURL();
+		DGaaSInfo info = EnvironmentInfo.getDGaaSInfo();
 
 		Report report = null;
 		try
 		{
-			report = buildReport(dgaasURL, rss);
+			report = buildReport( info, rss);
 		}
 		catch (Exception e)
 		{
@@ -201,7 +214,7 @@ public class RSS2PDFService extends BasicService
 		String jobJSON = null;
 		try
 		{
-			DocgenConfiguration configuration = new DocgenConfiguration(dgaasURL, report);
+			DocgenConfiguration configuration = new DocgenConfiguration( info, report);
 			if ( secret!=null && !secret.trim().isEmpty())
 			{
 				configuration.secret = secret.trim();

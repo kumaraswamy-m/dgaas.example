@@ -24,10 +24,9 @@ public class EnvironmentInfo
 		if ( vcaps == null || vcaps.trim().isEmpty())
 		{
 			String dgaasURL = System.getenv( "dgaas.url");
-			info.setURL( dgaasURL == null || dgaasURL.isEmpty() ? "http://giediprime.cluj.ro.ibm.com:9080/dgaas" : dgaasURL);
+			info.setURL( dgaasURL == null || dgaasURL.isEmpty() ? "http://localhost:8080/dgaas" : dgaasURL);
 			return info;
 		}
-		
 		
 		
 		return info;

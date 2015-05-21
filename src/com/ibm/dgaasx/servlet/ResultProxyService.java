@@ -16,6 +16,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.io.IOUtils;
 
+import com.ibm.dgaasx.config.DGaaSInfo;
 import com.ibm.dgaasx.config.EnvironmentInfo;
 import com.ibm.rpe.web.service.docgen.api.Parameters;
 import com.sun.jersey.api.client.ClientResponse;
@@ -41,9 +42,15 @@ public class ResultProxyService extends BasicService
 	public Response result( @ApiParam(value = "The URI of the result as returned by the /job method", required = true)  @PathParam(value="resultID") String resultID, 
 							@ApiParam(value = "The document generation job secret token.", required = false)   @QueryParam(value="secret") String secret)
 	{
-		WebResource resultService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSInfo().getURL()).path("/data/files").path( resultID).build());
+		DGaaSInfo info = EnvironmentInfo.getDGaaSInfo();
 		
-		ClientResponse response = resultService.header(Parameters.Header.SECRET,secret).type(MediaType.APPLICATION_OCTET_STREAM).get(ClientResponse.class); 
+		WebResource resultService = client.resource(UriBuilder.fromUri( info.getURL()).path("/data/files").path( resultID).build());
+		
+		ClientResponse response = resultService
+								.header(Parameters.Header.SECRET,secret)
+								.header(Parameters.BluemixHeader.INSTANCEID, info.getInstanceID())
+								.header(Parameters.BluemixHeader.REGION, info.getRegion())
+								.type(MediaType.APPLICATION_OCTET_STREAM).get(ClientResponse.class); 
 		if ( !checkResponse( response))
 		{
 			return Response.status(Response.Status.NOT_FOUND).entity("Result cannot be retrieved. Verify the ID and secret.").build();

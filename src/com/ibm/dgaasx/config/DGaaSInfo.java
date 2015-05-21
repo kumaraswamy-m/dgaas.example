@@ -16,12 +16,12 @@ public class DGaaSInfo
 		this.url = url;
 	}
 
-	public String getInstanceid()
+	public String getInstanceID()
 	{
 		return instanceid;
 	}
 
-	public void setInstanceid(String instanceid)
+	public void setInstanceID(String instanceid)
 	{
 		this.instanceid = instanceid;
 	}
