@@ -35,7 +35,7 @@ function monitorReport( jobURL)
 			{
 			    $( "#progressbar" ).progressbar({value: 5});
 			    
-		   		$( "#download_result").attr('href', "/dgaasx/api/result/" + job.results[0].uri);
+		   		$( "#download_result").attr('href', "/api/result/" + job.results[0].uri);
 			   
 				$( "#results_dialog" ).dialog({
 						modal:true,
@@ -77,7 +77,7 @@ function runReport( rssURL)
 {
 	$.ajax({
 		type: "POST",
-		url: "/dgaasx/api/rss2pdf?rss="+rssURL,
+		url: "/api/rss2pdf?rss="+rssURL,
 		xhrFields: {
 			 withCredentials: true
 		},
@@ -89,10 +89,11 @@ function runReport( rssURL)
 				return;
 			}
 
-			setTimeout( function(){ monitorReport( "/dgaasx/api/job/" +job.id);}, 1000);
+			setTimeout( function(){ monitorReport( "/api/job/" +job.id);}, 1000);
 		},
 		error: function(error, status)
 		{
+			$( "#progresstext").html("Failed. Error is: " + error.responseText);
 			console.error("Status is: " + status);
 			console.error(error);
 		}
