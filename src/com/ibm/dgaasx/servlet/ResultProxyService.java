@@ -41,7 +41,7 @@ public class ResultProxyService extends BasicService
 	public Response result( @ApiParam(value = "The URI of the result as returned by the /job method", required = true)  @PathParam(value="resultID") String resultID, 
 							@ApiParam(value = "The document generation job secret token.", required = false)   @QueryParam(value="secret") String secret)
 	{
-		WebResource resultService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSURL()).path("/data/files").path( resultID).build());
+		WebResource resultService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSInfo().getURL()).path("/data/files").path( resultID).build());
 		
 		ClientResponse response = resultService.header(Parameters.Header.SECRET,secret).type(MediaType.APPLICATION_OCTET_STREAM).get(ClientResponse.class); 
 		if ( !checkResponse( response))

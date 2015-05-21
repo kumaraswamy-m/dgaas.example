@@ -2,15 +2,34 @@ package com.ibm.dgaasx.config;
 
 public class EnvironmentInfo
 {
-	public static final String getDGaaSURL()
+	private static DGaaSInfo DGAAS_INFO = parseVCAPS();
+	
+	public static final DGaaSInfo getDGaaSInfo()
 	{
-		String dgaasURL = System.getenv( "dgaas.url");
-		return dgaasURL == null || dgaasURL.isEmpty() ? "http://giediprime.cluj.ro.ibm.com:9080/dgaas" : dgaasURL; 
+		return DGAAS_INFO;
 	}
 	
 	public static final String getBaseURL()
 	{
 		String baseURL = System.getenv( "base.url");
-		return baseURL == null || baseURL.isEmpty() ? "http://giediprime.cluj.ro.ibm.com:9080/dgaasx" : baseURL; 
+		return baseURL == null || baseURL.isEmpty() ? "http://localhost:8080/dgaasx" : baseURL; 
+	}
+	
+	
+	public static final DGaaSInfo parseVCAPS()
+	{
+		DGaaSInfo info = new DGaaSInfo();
+		
+		String vcaps = System.getenv("VCAP_SERVICES");
+		if ( vcaps == null || vcaps.trim().isEmpty())
+		{
+			String dgaasURL = System.getenv( "dgaas.url");
+			info.setURL( dgaasURL == null || dgaasURL.isEmpty() ? "http://giediprime.cluj.ro.ibm.com:9080/dgaas" : dgaasURL);
+			return info;
+		}
+		
+		
+		
+		return info;
 	}
 }

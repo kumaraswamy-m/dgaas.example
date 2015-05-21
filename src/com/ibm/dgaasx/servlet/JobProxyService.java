@@ -33,7 +33,7 @@ public class JobProxyService extends BasicService
 						 @ApiParam(value = "The document generation job secret token.", required = false)   @QueryParam(value="secret") String secret)
 	{
 		
-		WebResource jobService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSURL()).path("/data/jobs").path( jobID).build());
+		WebResource jobService = client.resource(UriBuilder.fromUri(EnvironmentInfo.getDGaaSInfo().getURL()).path("/data/jobs").path( jobID).build());
 		
 		ClientResponse response = jobService.header(Parameters.Header.SECRET, secret).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 		if ( !checkResponse( response))

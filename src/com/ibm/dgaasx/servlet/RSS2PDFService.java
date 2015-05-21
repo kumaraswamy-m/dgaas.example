@@ -93,7 +93,7 @@ public class RSS2PDFService extends BasicService
 		// create the report
 		ClientResponse response = dgaas.path("builder").path("change").accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, formData);
 		String reportJSON = response.getEntity(String.class);
-		if (Response.Status.OK.getStatusCode() != response.getStatus())
+		if ( !checkResponse( response))
 		{
 			throw new Exception("Could not create report");
 		}
@@ -185,7 +185,7 @@ public class RSS2PDFService extends BasicService
 	public Response rss2pdf( @ApiParam(value = "The RSS Feed to convert to PDF", required = false)  @QueryParam(value="rss") String rss,
 							 @ApiParam(value = "A secret to secure the document generation with", required = false) @QueryParam(value="secret") String secret) throws IOException
 	{
-		String dgaasURL = EnvironmentInfo.getDGaaSURL();
+		String dgaasURL = EnvironmentInfo.getDGaaSInfo().getURL();
 
 		Report report = null;
 		try
