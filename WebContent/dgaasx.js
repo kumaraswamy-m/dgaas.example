@@ -16,6 +16,17 @@ String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
+function getServiceUrl(serviceType) {
+	var url = location.href;
+	if(url.endsWith('/')) {
+		url += 'api/' + serviceType;
+	} else {
+		url += '/api/' + serviceType;
+	}
+	
+	return url;
+}
+
 function monitorReport( jobURL)
 {
 	progressVal = (progressVal + 1)%5;
@@ -35,7 +46,7 @@ function monitorReport( jobURL)
 			{
 			    $( "#progressbar" ).progressbar({value: 5});
 			    
-		   		$( "#download_result").attr('href', "/api/result/" + job.results[0].uri);
+		   		$( "#download_result").attr('href', getServiceUrl("result/") + job.results[0].uri);
 			   
 				$( "#results_dialog" ).dialog({
 						modal:true,
@@ -77,7 +88,7 @@ function runReport( rssURL)
 {
 	$.ajax({
 		type: "POST",
-		url: "/api/rss2pdf?rss="+rssURL,
+		url: getServiceUrl("rss2pdf") + "?rss="+rssURL,
 		xhrFields: {
 			 withCredentials: true
 		},
@@ -89,7 +100,7 @@ function runReport( rssURL)
 				return;
 			}
 
-			setTimeout( function(){ monitorReport( "/api/job/" +job.id);}, 1000);
+			setTimeout( function(){ monitorReport(getServiceUrl("job/") +job.id);}, 1000);
 		},
 		error: function(error, status)
 		{
