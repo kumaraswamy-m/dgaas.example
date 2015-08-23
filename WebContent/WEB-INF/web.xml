@@ -13,37 +13,21 @@
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 
-<!-- 
-	<servlet>
-		<servlet-name>JerseyWebApp</servlet-name>
+<!-- 	<servlet>
+		<servlet-name>com.ibm.dgaasx.servlet.DGaaSXApplication</servlet-name>
 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
 		<init-param>
-			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>com.ibm.dgaasx.servlet;com.wordnik.swagger.jersey.listing</param-value>
+			<param-name>javax.ws.rs.Application</param-name>
+			<param-value>com.ibm.dgaasx.servlet.DGaaSXApplication</param-value>
 		</init-param>
-		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<servlet-mapping>
-		<servlet-name>JerseyWebApp</servlet-name>
-		<url-pattern>/app/*</url-pattern>
+		<servlet-name>com.ibm.dgaasx.servlet.DGaaSXApplication</servlet-name>
+		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
-	<servlet>
-		<servlet-name>JerseyJaxrsConfig</servlet-name>
-		<servlet-class>com.wordnik.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
-		<init-param>
-			<param-name>api.version</param-name>
-			<param-value>1.0.0</param-value>
-		</init-param>
-		<init-param>
-			<param-name>swagger.api.basepath</param-name>
-			<param-value>http://localhost:8080/dgaasx/app</param-value>
-		</init-param>
-		<load-on-startup>2</load-on-startup>
-	</servlet>
- -->
- 
-	<filter>
+
+ -->	<filter>
 		<filter-name>CORSFilter</filter-name>
 		<filter-class>com.ibm.dgaasx.servlet.CORSFilter</filter-class>
 	</filter>

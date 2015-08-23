@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Licensed Materials - Property of IBM
+ * © Copyright IBM Corporation 2015. All Rights Reserved.
+ * 
+ * Note to U.S. Government Users Restricted Rights:
+ * Use, duplication or disclosure restricted by GSA ADP Schedule
+ * Contract with IBM Corp. 
+ *******************************************************************************/
 package com.ibm.dgaasx.servlet;
 
 import java.io.IOException;
@@ -28,7 +36,8 @@ public class CORSFilter implements Filter
 	}
 
 	@Override
-	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException,
+			ServletException
 	{
 		if (res instanceof HttpServletResponse)
 		{
@@ -51,6 +60,13 @@ public class CORSFilter implements Filter
 	@Override
 	public void init(FilterConfig arg0) throws ServletException
 	{
-		// TODO Auto-generated method stub
+		try
+		{
+			new DGaaSXApplication();
+		}
+		catch (Throwable e)
+		{
+			e.printStackTrace();
+		}
 	}
 }
