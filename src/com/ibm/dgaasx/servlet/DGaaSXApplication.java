@@ -17,6 +17,7 @@ import javax.ws.rs.core.Application;
 import com.ibm.dgaasx.servlet.docgen.JobProxyService;
 import com.ibm.dgaasx.servlet.docgen.RSS2PDFService;
 import com.ibm.dgaasx.servlet.docgen.ResultProxyService;
+import com.ibm.dgaasx.servlet.template.RSS2TemplateService;
 import com.ibm.dgaasx.utils.SystemUtils;
 import com.wordnik.swagger.jaxrs.config.BeanConfig;
 
@@ -24,8 +25,7 @@ import com.wordnik.swagger.jaxrs.config.BeanConfig;
 @ApplicationPath("/api")
 public class DGaaSXApplication extends Application
 {
-	private static final String API = "/api";
-	private static final String DGAASX_SWAGGER_BASE_PATH = "DGAASX_SWAGGER_BASE_PATH"; //$NON-NLS-1$
+	private static final String SWAGGER_BASE_PATH = "SWAGGER_BASE_PATH"; //$NON-NLS-1$
 
 	public DGaaSXApplication()
 	{
@@ -34,7 +34,7 @@ public class DGaaSXApplication extends Application
 		beanConfig.setDescription("This API is an example of using DGaaS (Document Generation as a Service) and produces PDF documents from RSS 2.0 feeds." + "<br/><br/>The procedure is:" + "<ol>" + "<li>Invoke /dgasaax/api/rss2pdf with the RSS feed you want to convert to PDF. Optionally provide a secret token to secure your operation.</li>" + "<li>Monitor the process at /dgasaax/api/job/<jobid> using the jobid returned by the first call. Pass the same secret token you used in #1.</li>" + "<li>Once the job completes succesfully ( the status of the job becomes finished) access the PDF at /dgasaax/api/result/<resulturi>. Pass the same secret token you used in #1.</li>" + "</ol>" + "<br/>The source code is hosted on Github at <a href='https://github.com/dgaas/dgaas.example'>https://github.com/dgaas/dgaas.example</a>. For questions and support please see the Contact the Developer link." + "<br/>");
 		beanConfig.setContact("dragos.cojocari@ro.ibm.com");
 		beanConfig.setVersion("1.0.0");
-		beanConfig.setBasePath(SystemUtils.getSystemProperty(DGAASX_SWAGGER_BASE_PATH, "")); //$NON-NLS-1$
+		beanConfig.setBasePath(SystemUtils.getSystemProperty(SWAGGER_BASE_PATH, "")); //$NON-NLS-1$
 		beanConfig.setResourcePackage(DGaaSXApplication.class.getPackage().getName());
 		beanConfig.setScan(true);
 	}
@@ -47,6 +47,8 @@ public class DGaaSXApplication extends Application
 		resources.add(RSS2PDFService.class);
 		resources.add(JobProxyService.class);
 		resources.add(ResultProxyService.class);
+		
+		resources.add(RSS2TemplateService.class);
 
 		resources.add(com.wordnik.swagger.jersey.listing.ApiListingResource.class);
 		resources.add(com.wordnik.swagger.jersey.listing.JerseyApiDeclarationProvider.class);

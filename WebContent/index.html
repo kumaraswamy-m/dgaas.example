@@ -28,15 +28,17 @@
 		
 		
 		<label style="margin-right: 10px">RSS Feed URL: </label>
-		<input id="rss" name="rss"  type="text" value="http://www.npr.org/rss/rss.php?id=1001" list="Defaults"/>
+		<input id="rss" name="rss"  type="text" value="http://feeds.bbci.co.uk/news/world/rss.xml" list="Defaults"/>
 		
 		<datalist id="Defaults">
     		<option value="http://feeds.bbci.co.uk/news/world/rss.xml">BBC News World</option>
     		<option value="http://www.npr.org/rss/rss.php?id=1001">NPR</option>
     		<option value="http://www.reddit.com/.rss">Reddit</option>
+			<option value="https://rpe.mybluemix.net/examples/data/requisitepro.xml">Req Pro</option>
 		</datalist>
 
-		<button id="generate" style="margin-top:10px">Generate PDF</button>
+		<button id="generate_pdf" style="margin-top:10px">Generate PDF</button>
+		<button id="generate_template" style="margin-top:10px">Generate Template and PDF</button>
 		
 		<br/>
 		<br/>
@@ -46,10 +48,17 @@
 			<div id="progresstext">Ready ...</div>
 		</div>
 		
-		<p><small>Built on DGaaS 1.0</small></p>
+		<p><small>Built on DGaaS 2.0</small></p>
 		
-		<div id="results_dialog" title="PDF Ready" style="text-align: center; margin: 15px;display: none">
-   				<a id="download_result" href="#">Download PDF ...</a>
+		<div id="results_dialog_pdf" title="PDF Ready" style="text-align: center; margin: 15px;display: none">
+   				<a id="download_pdf" href="#">Download PDF</a>
+		</div>
+		
+		<div id="results_dialog_template" title="Template and PDF Ready" style="text-align: center; margin: 15px;display: none">
+   				<a id="download_template" href="#">Download Template</a>
+   				<br />
+				<br />
+   				<a id="download_template_pdf" href="#">Download PDF</a>
 		</div>
 	</div>
 

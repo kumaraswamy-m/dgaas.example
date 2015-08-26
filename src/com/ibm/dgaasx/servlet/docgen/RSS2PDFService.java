@@ -27,6 +27,8 @@ import javax.ws.rs.core.UriInfo;
 import com.ibm.dgaasx.config.DGaaSInfo;
 import com.ibm.dgaasx.config.EnvironmentInfo;
 import com.ibm.dgaasx.servlet.BasicService;
+import com.ibm.dgaasx.servlet.template.RSS2TemplateService;
+import com.ibm.dgaasx.utils.DGaaSXConstants;
 import com.ibm.dgaasx.utils.JSONUtils;
 import com.ibm.rpe.web.service.docgen.api.Parameters;
 import com.ibm.rpe.web.service.docgen.api.model.DocgenJob;
@@ -46,11 +48,11 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/rss2pdf")
 @Api(value = "/rss2pdf", description = "Service for rendering an RSS 2.0 feed in PDF.")
+@SuppressWarnings("nls")
 public class RSS2PDFService extends BasicService
 {
 	private static final String TEMPLATE_DATA = "templateData";
 	private static final String NEW_OUTPUT = "newOutput";
-	private static final String BBC_NEW_FEED = "http://feeds.bbci.co.uk/news/rss.xml";
 
 	public static final class DocgenConfiguration
 	{
@@ -92,14 +94,27 @@ public class RSS2PDFService extends BasicService
 		}
 	}
 
-	private Report buildReport(URI baseURI, DGaaSInfo info, String dataSoure) throws Exception
+	private Report buildReport(URI baseURI, DGaaSInfo info, String dataSoure, String templateUrl) throws Exception
 	{
 		WebResource dgaas = client.resource(UriBuilder.fromUri(info.getURL()).build());
 
 		MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
 
+		if (templateUrl == null || "".equals(templateUrl))
+		{
+			boolean isRss = RSS2TemplateService.isRssFeed(dataSoure);
+			if (isRss)
+			{
+				templateUrl = baseURI.resolve("../data/newsfeed.dta").toString();
+			}
+			else
+			{
+				templateUrl = baseURI.resolve("../data/requisitepro.dta").toString();
+			}
+		}
+
 		ModifyData modifyData = new ModifyData();
-		modifyData.setUrl(baseURI.resolve("../data/newsfeed.dta").toString());
+		modifyData.setUrl(templateUrl);
 
 		List<ModifyData> templateData = new ArrayList<ModifyData>();
 		templateData.add(modifyData);
@@ -124,7 +139,7 @@ public class RSS2PDFService extends BasicService
 		{
 			for (ReportDataSource ds : template.getDataSources())
 			{
-				ds.setProperty("URI", dataSoure == null || dataSoure.trim().isEmpty() ? BBC_NEW_FEED : dataSoure);
+				ds.setProperty("URI", dataSoure == null || dataSoure.trim().isEmpty() ? DGaaSXConstants.BBC_NEW_FEED : dataSoure);
 			}
 		}
 
@@ -202,12 +217,14 @@ public class RSS2PDFService extends BasicService
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Convert an RSS 2.0 feed to PDF",
 			notes = "Uses a predefined template to produce a PDF document rendering the news feed.",
-			response = DocgenJob.class, produces = "application/json")
+			response = DocgenJob.class)
 	@ApiResponses(value =
 	{ @ApiResponse(code = 400, message = "Invalid value") })
 	public Response rss2pdf(@Context UriInfo uriInfo, @ApiParam(value = "The RSS Feed to convert to PDF",
-			required = false) @QueryParam(value = "rss") String rss,
-			@ApiParam(value = "A secret to secure the document generation with", required = false) @QueryParam(
+			required = true) @QueryParam(value = "rss") String rss,
+			@ApiParam(value = "The template to use to generate PDF", required = false) @QueryParam(
+					value = "templateUrl") String templateUrl, @ApiParam(
+					value = "A secret to secure the document generation with", required = false) @QueryParam(
 					value = "secret") String secret) throws IOException
 	{
 		DGaaSInfo info = EnvironmentInfo.getDGaaSInfo();
@@ -215,7 +232,7 @@ public class RSS2PDFService extends BasicService
 		Report report = null;
 		try
 		{
-			report = buildReport(uriInfo.getBaseUri(), info, rss);
+			report = buildReport(uriInfo.getBaseUri(), info, rss, templateUrl);
 		}
 		catch (Exception e)
 		{

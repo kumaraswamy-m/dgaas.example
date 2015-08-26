@@ -3,6 +3,7 @@
 	<name>DGaaSX</name>
 	<comment></comment>
 	<projects>
+		<project>com.ibm.rpe.web.service.docgen.api</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
