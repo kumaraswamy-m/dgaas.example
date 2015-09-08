@@ -32,7 +32,6 @@ public class CORSFilter implements Filter
 	@Override
 	public void destroy()
 	{
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -60,13 +59,6 @@ public class CORSFilter implements Filter
 	@Override
 	public void init(FilterConfig arg0) throws ServletException
 	{
-		try
-		{
-			new DGaaSXApplication();
-		}
-		catch (Throwable e)
-		{
-			e.printStackTrace();
-		}
+		// new DGaaSXApplication();
 	}
 }

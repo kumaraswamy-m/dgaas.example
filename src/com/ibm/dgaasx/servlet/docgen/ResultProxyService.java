@@ -47,8 +47,7 @@ public class ResultProxyService extends BasicService
 	@Path("/{resultID}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@ApiOperation(value = "Download the document produced by DGaaS.",
-			notes = "Download the document produced by DGaaS using the result's URI and the secret token.",
-			response = OutputStream.class)
+			notes = "Download the document produced by DGaaS using the result's URI and the secret token.")
 	@ApiResponses(value =
 	{ @ApiResponse(code = 400, message = "Invalid value"), @ApiResponse(code = 404,
 			message = "Result cannot be retrieved. Verify the ID and secret.") })

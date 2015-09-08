@@ -32,13 +32,13 @@ public class EnvironmentInfo
 
 		String vcaps = System.getenv("VCAP_SERVICES");
 
-		if (vcaps == null || vcaps.trim().isEmpty())
+		if (vcaps == null || vcaps.trim().isEmpty() || "{}".equals(vcaps))
 		{
 			String dgaasURL = SystemUtils.getSystemProperty("DGAAS_URL", null);
 			info.setURL(dgaasURL == null || dgaasURL.isEmpty() ? "http://localhost:8080/dgaas" : dgaasURL);
 			return info;
 		}
-
+		
 		JSONObject jsonRoot = new JSONObject(vcaps);
 		JSONObject docgenJSON = (JSONObject) jsonRoot.getJSONArray("Document Generation").get(0);
 		JSONObject credentialsJSON = docgenJSON.getJSONObject("credentials");

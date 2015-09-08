@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Licensed Materials - Property of IBM
+ * © Copyright IBM Corporation 2015. All Rights Reserved.
+ * 
+ * Note to U.S. Government Users Restricted Rights:
+ * Use, duplication or disclosure restricted by GSA ADP Schedule
+ * Contract with IBM Corp. 
+ *******************************************************************************/
 package com.ibm.dgaasx.servlet;
 
 import javax.ws.rs.core.Response;
@@ -9,6 +17,7 @@ import com.ibm.dgaasx.utils.ConnectionUtils;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 
+@SuppressWarnings("nls")
 public class BasicService
 {
 	protected final Logger log = LoggerFactory.getLogger( this.getClass());
