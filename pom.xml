@@ -28,6 +28,13 @@
 	    	<scope>system</scope>
 	    	<systemPath>${project.basedir}/WebContent/WEB-INF/lib/com.ibm.rpe.web.service.docgen.api.jar</systemPath>
 		</dependency>
+		
+		<dependency>
+    		<groupId>javax.servlet</groupId>
+    		<artifactId>servlet-api</artifactId>
+    		<version>3.0</version>
+    		<scope>provided</scope>
+		</dependency>
 	     
 		<dependency>
 			<groupId>asm</groupId>
