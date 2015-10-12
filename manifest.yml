@@ -1,11 +1,11 @@
 ---
 applications:
-- name:   dgaas_example
+- name:   dgaas_example_ddc
   memory: 512M
   path:   DGaaSX-2.0.1.war
 
   # the value of the `host` property needs to be unique across the
-  host:   dgaasx_ddc
+  host:   dgaas_example_ddc
 
   # used services
 
