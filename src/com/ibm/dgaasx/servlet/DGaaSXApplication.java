@@ -51,10 +51,12 @@ public class DGaaSXApplication extends Application
 
 		resources.add(RSS2TemplateService.class);
 
+        /*
 		resources.add(com.wordnik.swagger.jersey.listing.ApiListingResource.class);
 		resources.add(com.wordnik.swagger.jersey.listing.JerseyApiDeclarationProvider.class);
 		resources.add(com.wordnik.swagger.jersey.listing.ApiListingResourceJSON.class);
 		resources.add(com.wordnik.swagger.jersey.listing.JerseyResourceListingProvider.class);
+		*/
 
 		return resources;
 	}
