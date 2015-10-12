@@ -26,7 +26,7 @@
 	    	<artifactId>com.ibm.rpe.web.service.docgen</artifactId>
 	    	<version>1.0</version>
 	    	<scope>system</scope>
-	    	<systemPath>${project.basedir}/WebContent/WEB-INF/lib/com.ibm.rpe.web.service.docgen.api.jar</systemPath>
+	    	<systemPath>${project.basedir}/WebContent/WEB-INF/lib/com.ibm.rpe.web.service.docgen.api_2.0.1.jar</systemPath>
 		</dependency>
 		
 		<dependency>
