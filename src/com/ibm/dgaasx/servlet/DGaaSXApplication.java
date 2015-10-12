@@ -18,7 +18,7 @@ import com.ibm.dgaasx.servlet.docgen.RSS2PDFService;
 import com.ibm.dgaasx.servlet.docgen.ResultProxyService;
 import com.ibm.dgaasx.servlet.template.RSS2TemplateService;
 import com.ibm.dgaasx.utils.SystemUtils;
-import com.wordnik.swagger.jaxrs.config.BeanConfig;
+//import com.wordnik.swagger.jaxrs.config.BeanConfig;
 
 @SuppressWarnings("nls")
 // @ApplicationPath("/*")
@@ -28,6 +28,7 @@ public class DGaaSXApplication extends Application
 
 	public DGaaSXApplication()
 	{
+		/*
 		BeanConfig beanConfig = new BeanConfig();
 		beanConfig.setTitle("Example for Document Generation as a Service"); //$NON-NLS-1$
 		beanConfig.setContact("dragos.cojocari@ro.ibm.com");
@@ -36,6 +37,7 @@ public class DGaaSXApplication extends Application
 		beanConfig.setBasePath(SystemUtils.getSystemProperty(SWAGGER_BASE_PATH, "")); //$NON-NLS-1$
 		beanConfig.setResourcePackage(DGaaSXApplication.class.getPackage().getName());
 		beanConfig.setScan(true);
+		*/
 	}
 
 	@Override
