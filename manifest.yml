@@ -1,0 +1,13 @@
+---
+applications:
+- name:   dgaas_example
+  memory: 512M
+  path:   DGaaSX-2.0.1.war
+
+  # the value of the `host` property needs to be unique across the
+  host:   dgaasx_ddc
+
+  # used services
+
+  services:
+  - Document Generation
