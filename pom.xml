@@ -26,7 +26,11 @@
 	    	<artifactId>com.ibm.rpe.web.service.docgen</artifactId>
 	    	<version>1.0</version>
 	    	<scope>system</scope>
+<<<<<<< Upstream, based on e26334e196cba47c1c5a354f62d487fc3fabfb0d
 	    	<systemPath>${project.basedir}/WebContent/WEB-INF/lib/resources/com.ibm.rpe.web.service.docgen.api.jar</systemPath>
+=======
+	    	<systemPath>${project.basedir}/WebContent/WEB-INF/lib/com.ibm.rpe.web.service.docgen.api.jar</systemPath>
+>>>>>>> be99ff9 Fix pom.xml to include the docgen API jar.
 		</dependency>
 	     
 		<dependency>
