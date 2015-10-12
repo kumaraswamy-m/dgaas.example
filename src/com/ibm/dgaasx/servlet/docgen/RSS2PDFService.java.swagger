@@ -40,8 +40,15 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/rss2pdf")
+@Api(value = "/rss2pdf", description = "Service for rendering an RSS 2.0 feed in PDF.")
+@SuppressWarnings("nls")
 public class RSS2PDFService extends BasicService
 {
 	private static final String TEMPLATE_DATA = "templateData";
@@ -208,9 +215,17 @@ public class RSS2PDFService extends BasicService
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response rss2pdf(@Context UriInfo uriInfo, @QueryParam(value = "rss") String rss,
-							@QueryParam( value = "templateUrl") String templateUrl, 
-							@QueryParam( value = "secret") String secret) throws IOException
+	@ApiOperation(value = "Convert an RSS 2.0 feed to PDF",
+			notes = "Uses a predefined template to produce a PDF document rendering the news feed.",
+			response = DocgenJob.class)
+	@ApiResponses(value =
+	{ @ApiResponse(code = 400, message = "Invalid value") })
+	public Response rss2pdf(@Context UriInfo uriInfo, @ApiParam(value = "The RSS Feed to convert to PDF",
+			required = true) @QueryParam(value = "rss") String rss,
+			@ApiParam(value = "The template to use to generate PDF", required = false) @QueryParam(
+					value = "templateUrl") String templateUrl, @ApiParam(
+					value = "A secret to secure the document generation with", required = false) @QueryParam(
+					value = "secret") String secret) throws IOException
 	{
 		DGaaSInfo info = EnvironmentInfo.getDGaaSInfo();
 

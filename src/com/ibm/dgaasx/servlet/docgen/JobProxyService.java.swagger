@@ -24,6 +24,11 @@ import com.ibm.rpe.web.service.docgen.api.Parameters;
 import com.ibm.rpe.web.service.docgen.api.model.DocgenJob;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/job")
 @Api(value = "/job", description = "A proxy to the Job Service used by DGaaS")
@@ -31,8 +36,19 @@ public class JobProxyService extends BasicService
 {
 	@GET
 	@Path("/{jobID}")
-	
-	public Response job( @PathParam(value = "jobID") String jobID, @QueryParam(value = "secret") String secret)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(
+			value = "Request information for a document generation job",
+			notes = "Request information for a document generation job using the job's ID and the secret token. The information return consists of job status, events and if the job is finished, the results.",
+			response = DocgenJob.class, produces = "application/json")
+	@ApiResponses(value =
+	{ @ApiResponse(code = 400, message = "Invalid value"), @ApiResponse(code = 404,
+			message = "Job information cannot be retrieved. Verify the ID and secret.") })
+	public
+			Response
+			job(@ApiParam(value = "The id of the job as returned by the /docgen method", required = true) @PathParam(
+					value = "jobID") String jobID, @ApiParam(value = "The document generation job secret token.",
+					required = false) @QueryParam(value = "secret") String secret)
 	{
 
 		DGaaSInfo info = EnvironmentInfo.getDGaaSInfo();

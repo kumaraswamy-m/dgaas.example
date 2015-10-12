@@ -50,8 +50,14 @@ import com.ibm.rpe.web.service.template.api.model.TemplateSchema;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/rss2template")
+@Api(value = "/rss2template", description = "Service for generating a RPE template from an RSS 2.0 feed.")
 @SuppressWarnings("nls")
 public class RSS2TemplateService extends BasicService
 {
@@ -61,8 +67,14 @@ public class RSS2TemplateService extends BasicService
 	@POST
 	@Path("/json")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response rss2templatejson(@Context UriInfo uriInfo, @QueryParam(value = "url") String xmlUrl,
-			@QueryParam(value = "secret") String secret) throws IOException
+	@ApiOperation(value = "Convert an RSS 2.0 feed to template JSON",
+			notes = "Create a predefined template JSON from the news feed.", response = Template.class)
+	@ApiResponses(value =
+	{ @ApiResponse(code = 400, message = "Invalid value") })
+	public Response rss2templatejson(@Context UriInfo uriInfo, @ApiParam(value = "The RSS Feed to convert to PDF",
+			required = true) @QueryParam(value = "url") String xmlUrl,
+			@ApiParam(value = "A secret to secure the document generation with", required = false) @QueryParam(
+					value = "secret") String secret) throws IOException
 	{
 		info = EnvironmentInfo.getDGaaSInfo();
 
@@ -111,8 +123,14 @@ public class RSS2TemplateService extends BasicService
 	@POST
 	@Path("/dta")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response rss2templatedta( @FormParam( value = "template") String templateJson,
-									 @QueryParam( value = "secret") String secret) throws IOException
+	@ApiOperation(value = "Convert an RSS 2.0 feed to template JSON",
+			notes = "Create a predefined template JSON from the news feed.")
+	@ApiResponses(value =
+	{ @ApiResponse(code = 400, message = "Invalid value") })
+	public Response rss2templatedta(@ApiParam(value = "The template in JSON format", required = true) @FormParam(
+			value = "template") String templateJson,
+			@ApiParam(value = "A secret to secure the document generation with", required = false) @QueryParam(
+					value = "secret") String secret) throws IOException
 	{
 		if (templateJson == null || "".equals(templateJson.trim()))
 		{
@@ -154,7 +172,15 @@ public class RSS2TemplateService extends BasicService
 	@GET
 	@Path("/{templateID}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response downloadTemplate( @PathParam(value = "templateID") String templateID, @QueryParam( value = "secret") String secret) throws FileNotFoundException
+	@ApiOperation(value = "Download the document produced by DGaaS.",
+			notes = "Download the document produced by DGaaS using the result's URI and the secret token.")
+	@ApiResponses(value =
+	{ @ApiResponse(code = 400, message = "Invalid value"), @ApiResponse(code = 404,
+			message = "Result cannot be retrieved. Verify the ID and secret.") })
+	public Response downloadTemplate(@ApiParam(value = "The URI of the result as returned by the /job method",
+			required = true) @PathParam(value = "templateID") String templateID,
+			@ApiParam(value = "The document generation job secret token.", required = false) @QueryParam(
+					value = "secret") String secret) throws FileNotFoundException
 	{
 		String templatePath = templateIdToPathMap.get(templateID);
 

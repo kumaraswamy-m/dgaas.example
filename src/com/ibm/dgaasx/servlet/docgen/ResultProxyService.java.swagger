@@ -31,8 +31,14 @@ import com.ibm.dgaasx.utils.DGaaSXConstants;
 import com.ibm.rpe.web.service.docgen.api.Parameters;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/result")
+@Api(value = "/result", description = "A proxy to the Result Service used by DGaaS.")
 @SuppressWarnings("nls")
 public class ResultProxyService extends BasicService
 {
@@ -40,7 +46,15 @@ public class ResultProxyService extends BasicService
 	@GET
 	@Path("/{resultID}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response result( @PathParam( value = "resultID") String resultID,  @QueryParam(value = "secret") String secret)
+	@ApiOperation(value = "Download the document produced by DGaaS.",
+			notes = "Download the document produced by DGaaS using the result's URI and the secret token.")
+	@ApiResponses(value =
+	{ @ApiResponse(code = 400, message = "Invalid value"), @ApiResponse(code = 404,
+			message = "Result cannot be retrieved. Verify the ID and secret.") })
+	public Response result(
+			@ApiParam(value = "The URI of the result as returned by the /job method", required = true) @PathParam(
+					value = "resultID") String resultID, @ApiParam(value = "The document generation job secret token.",
+					required = false) @QueryParam(value = "secret") String secret)
 	{
 		DGaaSInfo info = EnvironmentInfo.getDGaaSInfo();
 
