@@ -3,9 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>DGaaSX</groupId>
 	<artifactId>DGaaSX</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>2.0.1</version>
 	<name>DGaaS Example</name>
 	<description>DGaaS Example Doc</description>
+	<packaging>war</packaging>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
