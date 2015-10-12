@@ -26,7 +26,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 @Path("/job")
-@Api(value = "/job", description = "A proxy to the Job Service used by DGaaS")
 public class JobProxyService extends BasicService
 {
 	@GET
