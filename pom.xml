@@ -20,6 +20,15 @@
 		</plugins>
 	</build>
 	<dependencies>
+	    
+		<dependency>
+	    	<groupId>docgen</groupId>
+	    	<artifactId>com.ibm.rpe.web.service.docgen</artifactId>
+	    	<version>1.0</version>
+	    	<scope>system</scope>
+	    	<systemPath>${project.basedir}/WebContent/WEB-INF/lib/resources/com.ibm.rpe.web.service.docgen.api.jar</systemPath>
+		</dependency>
+	     
 		<dependency>
 			<groupId>asm</groupId>
 			<artifactId>asm-parent</artifactId>
