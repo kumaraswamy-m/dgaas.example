@@ -1,27 +1,56 @@
+body
+{
+	color: #003939;
+	background-color: #B9C9C8;
+}
+
 #centerDiv {
+	width: 600px;
+	margin:0 auto;
+	border: 1px solid;
+	border-radius: 3px;
+	padding: 0px;
+	background-color: #84AEAE;
+	
 	XXX-position: absolute;
-	width: 500px;
 	XXX-z-index: 15;
 	XXX-top: 30%;
 	XXX-left: 35%;
 	XXX-margin: -100px 0 0 -150px;
-	border: 1px solid;
-	border-radius: 3px;
 	XXX-box-shadow: 10px 10px 5px #888888;
-	padding: 10px;
-	background-color: WhiteSmoke;
 }
 
-.smaller
+.logo {
+	margin-left: 5px;
+	margin-top: 15px;
+}
+	
+.header {
+	margin: 3px;
+	float:right;
+}
+
+H3 {
+	margin-bottom: 5px;
+}
+
+.form-content {
+	clear: right;
+	padding: 10px;
+	background-color: #C6D7D7;
+}
+
+.subtitle
 {
-	maergin-top: 0px;
-	font-size: 12px;
+	margin-top: 0px;
+	margin-bottom: 15px;
+	font-size: 14px;
 	font-family: Arial;
-	font-style: italic;
+	#font-style: italic;
 }
 
 #rss {
-	width: 370px;
+	width: 450px;
 }
 
 input, select {
@@ -31,22 +60,25 @@ input, select {
 
 button
 {
-    font-weight: bold;	
+    font-size: 14px;
+    font-family: Arial;	
+    padding: 3px;
+    color: #003939;
 }
 
 html, body {
 	height: 100%;
 }
 
-body, strong, b, em, i, label, input,p, button {
-	font-size: 12px;
+body, strong, b, em, i, label, input,p{
+	font-size: 14px;
 	font-family: Arial;
 }
 
 H3
 {
 	color: DarkRed;
-	font-size: 16px;
+	font-size: 20px;
 }
 
 #jobdetails
@@ -67,7 +99,7 @@ H3
 #progressbar
 {
 	width: 100%;
-	height:25px;
+	height:30px;
 	text-align: center;
 }
 
@@ -75,7 +107,7 @@ H3
 {
 	text-align: center;
     text-align: center;
-    margin-top: -20px;
+    margin-top: -25px;
     font-weight: normal;
 }
 

@@ -218,6 +218,8 @@ function openSuccessDialog(dialogId, linkId, url)
 
 function generateDocument() {
 	$( "#progressbar" ).progressbar({value: 0});
+	 $("#progressbar > div").css({ 'background': '#B9C9C8' });
+	 
 	var rssURL = document.getElementById("rss").value;
 	$( "#progresstext").html("Starting ...");
 	enableDisableButton('#generate_template', false);
