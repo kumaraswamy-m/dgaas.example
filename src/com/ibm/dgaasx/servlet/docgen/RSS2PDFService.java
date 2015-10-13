@@ -17,12 +17,16 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 
 import com.ibm.dgaasx.config.DGaaSInfo;
 import com.ibm.dgaasx.config.EnvironmentInfo;
@@ -35,10 +39,6 @@ import com.ibm.rpe.web.service.docgen.api.model.ModifyData;
 import com.ibm.rpe.web.service.docgen.api.model.Report;
 import com.ibm.rpe.web.service.docgen.api.model.ReportTemplate;
 import com.ibm.rpe.web.service.docgen.api.model.ReportTemplate.ReportDataSource;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Path("/rss2pdf")
 public class RSS2PDFService extends BasicService
@@ -88,9 +88,7 @@ public class RSS2PDFService extends BasicService
 
 	private Report buildReport(URI baseURI, DGaaSInfo info, String dataSoure, String templateUrl) throws Exception
 	{
-		WebResource dgaas = client.resource(UriBuilder.fromUri(info.getURL()).build());
-
-		MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
+		WebTarget dgaas = client.target(UriBuilder.fromUri(info.getURL()).build());
 
 		if (templateUrl == null || "".equals(templateUrl))
 		{
@@ -111,19 +109,19 @@ public class RSS2PDFService extends BasicService
 		List<ModifyData> templateData = new ArrayList<ModifyData>();
 		templateData.add(modifyData);
 
-		formData.add(TEMPLATE_DATA, JSONUtils.writeValue(templateData));
-		// formData.add(NEW_OUTPUT, "Word");
-		formData.add(NEW_OUTPUT, "PDF");
+		Form form = new Form();
+		form.param(TEMPLATE_DATA, JSONUtils.writeValue(templateData));
+		form.param(NEW_OUTPUT, "PDF");
 
 		// create the report
-		ClientResponse response = dgaas.path("builder").path("change").header(Parameters.BluemixHeader.INSTANCEID, info.getInstanceID()).header(Parameters.BluemixHeader.REGION, info.getRegion()).accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, formData);
+		Response response = dgaas.path("builder").path("change").request(MediaType.APPLICATION_JSON).header(Parameters.BluemixHeader.INSTANCEID, info.getInstanceID()).header(Parameters.BluemixHeader.REGION, info.getRegion()).post(Entity.entity(form,MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
 		if (!checkResponse(response))
 		{
 			throw new Exception("Could not create report");
 		}
 
-		String reportJSON = response.getEntity(String.class);
+		String reportJSON = response.readEntity( String.class);
 
 		// modify the report, set the data source URI
 		Report report = (Report) JSONUtils.fromJSON(reportJSON, Report.class);
@@ -140,69 +138,69 @@ public class RSS2PDFService extends BasicService
 
 	protected String runReport(DocgenConfiguration dgaasConfig) throws Exception
 	{
-		WebResource dgaas = client.resource(UriBuilder.fromUri(dgaasConfig.getDGaaSInfo().getURL()).build());
+		WebTarget dgaas = client.target(UriBuilder.fromUri(dgaasConfig.getDGaaSInfo().getURL()).build());
 
 		// start dogen
-		MultivaluedMap<String, String> runData = new MultivaluedMapImpl();
-		runData.add(Parameters.Form.REPORT, JSONUtils.writeValue(dgaasConfig.report));
+		Form runData = new Form();
+		runData.param(Parameters.Form.REPORT, JSONUtils.writeValue(dgaasConfig.report));
 		// runData.add(Parameters.Form.TYPE, dgaasConfig.reportType);
 
-		WebResource jobService = null;
+		WebTarget jobService = null;
 		if (dgaasConfig.jobsServiceURL != null)
 		{
-			runData.add(Parameters.Form.JOB_SERVICE, dgaasConfig.jobsServiceURL);
-			jobService = client.resource(UriBuilder.fromUri(dgaasConfig.jobsServiceURL).build());
+			runData.param(Parameters.Form.JOB_SERVICE, dgaasConfig.jobsServiceURL);
+			jobService = client.target(UriBuilder.fromUri(dgaasConfig.jobsServiceURL).build());
 		}
 		else
 		{
-			jobService = client.resource(UriBuilder.fromUri(dgaasConfig.getDGaaSInfo().getURL() + "/data/jobs").build());
+			jobService = client.target(UriBuilder.fromUri(dgaasConfig.getDGaaSInfo().getURL() + "/data/jobs").build());
 		}
 
-		WebResource fileService = null;
+		WebTarget fileService = null;
 		if (dgaasConfig.fileServiceURL != null)
 		{
-			runData.add(Parameters.Form.FILE_SERVICE, dgaasConfig.fileServiceURL);
-			fileService = client.resource(UriBuilder.fromUri(dgaasConfig.fileServiceURL).build());
+			runData.param(Parameters.Form.FILE_SERVICE, dgaasConfig.fileServiceURL);
+			fileService = client.target(UriBuilder.fromUri(dgaasConfig.fileServiceURL).build());
 		}
 		else
 		{
-			fileService = client.resource(UriBuilder.fromUri(dgaasConfig.getDGaaSInfo().getURL() + "/data/files").build());
+			fileService = client.target(UriBuilder.fromUri(dgaasConfig.getDGaaSInfo().getURL() + "/data/files").build());
 		}
 
 		if (dgaasConfig.jobid != null)
 		{
-			runData.add(Parameters.Form.JOBID, dgaasConfig.jobid);
+			runData.param(Parameters.Form.JOBID, dgaasConfig.jobid);
 		}
 
-		runData.add(Parameters.Form.JOB_SERVICE_TYPE, dgaasConfig.jobServiceType);
-		runData.add(Parameters.Form.JOB_SERVICE_USER, dgaasConfig.jobServiceUser);
-		runData.add(Parameters.Form.JOB_SERVICE_PASSWORD, dgaasConfig.jobServicePassword);
+		runData.param(Parameters.Form.JOB_SERVICE_TYPE, dgaasConfig.jobServiceType);
+		runData.param(Parameters.Form.JOB_SERVICE_USER, dgaasConfig.jobServiceUser);
+		runData.param(Parameters.Form.JOB_SERVICE_PASSWORD, dgaasConfig.jobServicePassword);
 
 		if (dgaasConfig.jobServiceUser != null)
 		{
-			jobService.addFilter(new HTTPBasicAuthFilter(dgaasConfig.jobServiceUser, dgaasConfig.jobServicePassword));
+			jobService.register( HttpAuthenticationFeature.basicBuilder().nonPreemptive().credentials( dgaasConfig.jobServiceUser, dgaasConfig.jobServicePassword).build());
 		}
 
-		runData.add(Parameters.Form.FILE_SERVICE_TYPE, dgaasConfig.fileServiceType);
-		runData.add(Parameters.Form.FILE_SERVICE_USER, dgaasConfig.fileServiceUser);
-		runData.add(Parameters.Form.FILE_SERVICE_PASSWORD, dgaasConfig.fileServicePassword);
-		runData.add(Parameters.Form.PREVIEW_LIMIT, Integer.toString(dgaasConfig.previewLimit));
+		runData.param(Parameters.Form.FILE_SERVICE_TYPE, dgaasConfig.fileServiceType);
+		runData.param(Parameters.Form.FILE_SERVICE_USER, dgaasConfig.fileServiceUser);
+		runData.param(Parameters.Form.FILE_SERVICE_PASSWORD, dgaasConfig.fileServicePassword);
+		runData.param(Parameters.Form.PREVIEW_LIMIT, Integer.toString(dgaasConfig.previewLimit));
 
 		if (dgaasConfig.previewLimit > 0)
 		{
-			fileService.addFilter(new HTTPBasicAuthFilter(dgaasConfig.fileServiceUser, dgaasConfig.fileServicePassword));
-
+			fileService.register( HttpAuthenticationFeature.basicBuilder().nonPreemptive().credentials( dgaasConfig.fileServiceUser, dgaasConfig.fileServicePassword).build());
 		}
 
 		log.info("Starting docgen ...");
 
-		ClientResponse response = dgaas.path("docgen").header(Parameters.Header.SECRET, dgaasConfig.secret).header(Parameters.BluemixHeader.INSTANCEID, dgaasConfig.info.getInstanceID()).header(Parameters.BluemixHeader.REGION, dgaasConfig.info.getRegion()).accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, runData);
+		Response response = dgaas.path("docgen").request(MediaType.APPLICATION_JSON).header(Parameters.Header.SECRET, dgaasConfig.secret).header(Parameters.BluemixHeader.INSTANCEID, dgaasConfig.info.getInstanceID()).header(Parameters.BluemixHeader.REGION, dgaasConfig.info.getRegion()).post(Entity.entity(runData,MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 		if (!checkResponse(response))
 		{
+			log.info("Cannot start document generation");
 			throw new Exception("Cannot start document generation");
 		}
 
-		return response.getEntity(String.class);
+		return response.readEntity(String.class);
 	}
 
 	@POST

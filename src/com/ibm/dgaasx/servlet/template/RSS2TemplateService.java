@@ -25,9 +25,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
@@ -47,9 +49,6 @@ import com.ibm.rpe.web.service.template.api.model.Operation;
 import com.ibm.rpe.web.service.template.api.model.Template;
 import com.ibm.rpe.web.service.template.api.model.TemplateElement;
 import com.ibm.rpe.web.service.template.api.model.TemplateSchema;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Path("/rss2template")
 @SuppressWarnings("nls")
@@ -123,18 +122,18 @@ public class RSS2TemplateService extends BasicService
 
 		info = EnvironmentInfo.getDGaaSInfo();
 
-		MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
-		formData.add("template", templateJson);
+		Form form = new Form();
+		form.param("template", templateJson);
 
-		WebResource dtaService = client.resource(UriBuilder.fromUri(info.getURL()).path("/template/createdta").build());
+		WebTarget dtaService = client.target(UriBuilder.fromUri(info.getURL()).path("/template/createdta").build());
 
-		ClientResponse response = dtaService.header(Parameters.Header.SECRET, secret).header(Parameters.BluemixHeader.INSTANCEID, info.getInstanceID()).header(Parameters.BluemixHeader.REGION, info.getRegion()).accept(MediaType.APPLICATION_OCTET_STREAM).post(ClientResponse.class, formData);
+		Response response = dtaService.request(MediaType.APPLICATION_OCTET_STREAM).header(Parameters.Header.SECRET, secret).header(Parameters.BluemixHeader.INSTANCEID, info.getInstanceID()).header(Parameters.BluemixHeader.REGION, info.getRegion()).post( Entity.entity(form,MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 		if (!checkResponse(response))
 		{
 			return Response.status(Response.Status.NOT_FOUND).entity("Result cannot be retrieved. Verify the ID and secret.").build();
 		}
 
-		InputStream inputStream = response.getEntity(InputStream.class);
+		InputStream inputStream = response.readEntity(InputStream.class);
 
 		String templatePath = System.getProperty("java.io.tmpdir") + "template_" + UUID.randomUUID().toString() + ".dta";
 		FileOutputStream fos = new FileOutputStream(templatePath);
@@ -547,11 +546,11 @@ public class RSS2TemplateService extends BasicService
 			commandJson = JSONUtils.writeValue(operation);
 		}
 
-		ClientResponse response = changeTemplate(null, JSONUtils.writeValue(schema), commandJson);
+		Response response = changeTemplate(null, JSONUtils.writeValue(schema), commandJson);
 
 		checkResponse(response);
 
-		templateJSON = response.getEntity(String.class);
+		templateJSON = response.readEntity(String.class);
 
 		return (Template) JSONUtils.readValue(templateJSON, Template.class);
 	}
@@ -559,10 +558,10 @@ public class RSS2TemplateService extends BasicService
 	private String callAPI(Operation operation, String templateJson, boolean printResponse, String prefix)
 			throws IOException
 	{
-		ClientResponse response = changeTemplate(templateJson, null, JSONUtils.writeValue(operation));
+		Response response = changeTemplate(templateJson, null, JSONUtils.writeValue(operation));
 
 		checkResponse(response);
-		String returnJson = response.getEntity(String.class);
+		String returnJson = response.readEntity(String.class);
 		if (printResponse)
 		{
 			if (!CommonUtils.isNullOrEmpty(prefix))
@@ -584,18 +583,17 @@ public class RSS2TemplateService extends BasicService
 		return operation;
 	}
 
-	private ClientResponse changeTemplate(String templateJson, String schemaJson, String commandJson)
-			throws IOException
+	private Response changeTemplate(String templateJson, String schemaJson, String commandJson) throws IOException
 	{
-		MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
+		Form form = new Form();
 
-		formData.add(Parameters.Form.TEMPLATE, templateJson);
-		formData.add(Parameters.Form.COMMAND_JSON, commandJson);
-		formData.add(Parameters.Form.SCHEMA, schemaJson);
+		form.param(Parameters.Form.TEMPLATE, templateJson);
+		form.param(Parameters.Form.COMMAND_JSON, commandJson);
+		form.param(Parameters.Form.SCHEMA, schemaJson);
 
-		WebResource service = client.resource(UriBuilder.fromUri(info.getURL()).build());
+		WebTarget service = client.target(UriBuilder.fromUri(info.getURL()).build());
 
-		return service.path("template").path("change").accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, formData);
+		return service.path("template").path("change").request(MediaType.APPLICATION_JSON).post(Entity.entity(form,MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 	}
 
 	private TemplateSchema createSchemaBean(String name, String type, String description, String url, String id)

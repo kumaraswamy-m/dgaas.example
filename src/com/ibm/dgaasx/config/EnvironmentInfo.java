@@ -35,7 +35,7 @@ public class EnvironmentInfo
 		if (vcaps == null || vcaps.trim().isEmpty() || "{}".equals(vcaps))
 		{
 			String dgaasURL = SystemUtils.getSystemProperty("DGAAS_URL", null);
-			info.setURL(dgaasURL == null || dgaasURL.isEmpty() ? "http://localhost:8080/dgaas" : dgaasURL);
+			info.setURL(dgaasURL == null || dgaasURL.isEmpty() ? "https://giediprime:9443/dgaas" : dgaasURL);
 			return info;
 		}
 		

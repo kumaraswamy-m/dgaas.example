@@ -17,6 +17,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -29,14 +30,11 @@ import com.ibm.dgaasx.config.EnvironmentInfo;
 import com.ibm.dgaasx.servlet.BasicService;
 import com.ibm.dgaasx.utils.DGaaSXConstants;
 import com.ibm.rpe.web.service.docgen.api.Parameters;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 @Path("/result")
 @SuppressWarnings("nls")
 public class ResultProxyService extends BasicService
 {
-
 	@GET
 	@Path("/{resultID}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -44,15 +42,15 @@ public class ResultProxyService extends BasicService
 	{
 		DGaaSInfo info = EnvironmentInfo.getDGaaSInfo();
 
-		WebResource resultService = client.resource(UriBuilder.fromUri(info.getURL()).path("/data/files").path(resultID).build());
+		WebTarget resultService = client.target(UriBuilder.fromUri(info.getURL()).path("/data/files").path(resultID).build());
 
-		ClientResponse response = resultService.header(Parameters.Header.SECRET, secret).header(Parameters.BluemixHeader.INSTANCEID, info.getInstanceID()).header(Parameters.BluemixHeader.REGION, info.getRegion()).type(MediaType.APPLICATION_OCTET_STREAM).get(ClientResponse.class);
+		Response response = resultService.request(MediaType.APPLICATION_OCTET_STREAM).header(Parameters.Header.SECRET, secret).header(Parameters.BluemixHeader.INSTANCEID, info.getInstanceID()).header(Parameters.BluemixHeader.REGION, info.getRegion()).get();
 		if (!checkResponse(response))
 		{
 			return Response.status(Response.Status.NOT_FOUND).entity("Result cannot be retrieved. Verify the ID and secret.").build();
 		}
 
-		String contentDisposition = response.getHeaders().getFirst(DGaaSXConstants.CONTENT_DISPOSITION);
+		String contentDisposition = (String) response.getHeaders().getFirst(DGaaSXConstants.CONTENT_DISPOSITION);
 		String fileName = "result";
 		if (contentDisposition != null)
 		{
@@ -63,8 +61,10 @@ public class ResultProxyService extends BasicService
 			}
 		}
 
-		final InputStream is = response.getEntityInputStream();
-
+		log.info( "Downloading result ...");
+		
+		final InputStream is = (InputStream) response.getEntity();
+		
 		// OR: use a custom StreamingOutput and set to Response
 		StreamingOutput stream = new StreamingOutput()
 		{

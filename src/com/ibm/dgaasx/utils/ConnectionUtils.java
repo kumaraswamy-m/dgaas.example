@@ -18,11 +18,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.client.urlconnection.HTTPSProperties;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 
 public class ConnectionUtils
 {
@@ -81,19 +78,17 @@ public class ConnectionUtils
 	
 	public static Client createClient() 
 	{
-		ClientConfig config = new DefaultClientConfig();
-		
 		try
 		{
-			SSLContext ctx = getSSLContext();
-			ctx.init(null, certs, null);
-			config.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES, new HTTPSProperties(hostnameVerifier, ctx));
+			SSLContext sslContext = getSSLContext();
+			sslContext.init(null, certs, null);
+			
+			return ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(hostnameVerifier).build();
+			
 		}
 		catch( GeneralSecurityException e)
 		{
 			throw new RuntimeException(e);
 		}
-		
-		return Client.create(config);
 	}
 }

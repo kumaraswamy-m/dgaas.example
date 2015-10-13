@@ -8,14 +8,13 @@
  *******************************************************************************/
 package com.ibm.dgaasx.servlet;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ibm.dgaasx.utils.ConnectionUtils;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
 
 @SuppressWarnings("nls")
 public class BasicService
@@ -24,13 +23,13 @@ public class BasicService
 	
 	protected Client client = ConnectionUtils.createClient();
 	
-	protected boolean checkResponse(ClientResponse response)
+	protected boolean checkResponse(Response response)
 	{
 		if (Response.Status.Family.SUCCESSFUL != response.getStatusInfo().getFamily())
 		{
 			log.info( ">>> ERROR: " + response.getStatusInfo().getStatusCode());
 			log.info( ">>> Reason: " + response.getStatusInfo().getReasonPhrase());
-			log.info( ">>> Content: " + response.getEntity(String.class));
+			log.info( ">>> Content: " + response.readEntity( String.class));
 		}
 
 		return Response.Status.Family.SUCCESSFUL == response.getStatusInfo().getFamily();
