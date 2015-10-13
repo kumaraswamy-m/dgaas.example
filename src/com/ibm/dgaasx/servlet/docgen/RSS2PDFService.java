@@ -86,7 +86,7 @@ public class RSS2PDFService extends BasicService
 		}
 	}
 
-	private Report buildReport(URI baseURI, DGaaSInfo info, String dataSoure, String templateUrl) throws Exception
+	private Report buildReport(UriInfo uriInfo, DGaaSInfo info, String dataSoure, String templateUrl) throws Exception
 	{
 		WebTarget dgaas = client.target(UriBuilder.fromUri(info.getURL()).build());
 
@@ -95,13 +95,15 @@ public class RSS2PDFService extends BasicService
 			boolean isRss = RSS2TemplateService.isRssFeed(dataSoure);
 			if (isRss)
 			{
-				templateUrl = baseURI.resolve("../data/newsfeed.dta").toString();
+				templateUrl = uriInfo.resolve( new URI( "../data/newsfeed.dta")).toString();
 			}
 			else
 			{
-				templateUrl = baseURI.resolve("../data/requisitepro.dta").toString();
+				templateUrl = uriInfo.resolve( new URI("../data/requisitepro.dta")).toString();
 			}
 		}
+		
+		log.info("Template URL is: " + templateUrl);
 
 		ModifyData modifyData = new ModifyData();
 		modifyData.setUrl(templateUrl);
@@ -214,7 +216,8 @@ public class RSS2PDFService extends BasicService
 		Report report = null;
 		try
 		{
-			report = buildReport(uriInfo.getBaseUri(), info, rss, templateUrl);
+			log.info("Absolute path is: " + uriInfo.getAbsolutePath());
+			report = buildReport( uriInfo, info, rss, templateUrl);
 		}
 		catch (Exception e)
 		{
