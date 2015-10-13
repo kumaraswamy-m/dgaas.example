@@ -1,4 +1,4 @@
-bin
-tmp
-target
+*/bin/**
+*/tmp/**
+*/target/**
 *.class
