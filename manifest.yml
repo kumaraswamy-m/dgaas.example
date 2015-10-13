@@ -9,5 +9,5 @@ applications:
 
   # used services
 
-  #services:
-  #- Document Generation
+  services:
+  - Document Generation
