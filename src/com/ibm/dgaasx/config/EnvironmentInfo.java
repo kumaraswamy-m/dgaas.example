@@ -36,6 +36,9 @@ public class EnvironmentInfo
 		{
 			String dgaasURL = SystemUtils.getSystemProperty("DGAAS_URL", null);
 			info.setURL(dgaasURL == null || dgaasURL.isEmpty() ? "https://giediprime:9443/dgaas" : dgaasURL);
+			
+			log.info("No VCAPS detected. Using default DGaaS URL: " + dgaasURL);
+			
 			return info;
 		}
 		
@@ -46,6 +49,8 @@ public class EnvironmentInfo
 		info.setURL(credentialsJSON.getString("url"));
 		info.setInstanceID(credentialsJSON.getString("instanceid"));
 		info.setRegion(credentialsJSON.getString("region"));
+		
+		log.info("VCAPS detected. DgaaS URL is: " + info.getURL());
 
 		return info;
 	}

@@ -118,7 +118,7 @@ public class RSS2PDFService extends BasicService
 
 		if (!checkResponse(response))
 		{
-			throw new Exception("Could not create report");
+			throw new Exception("Could not create report. Server returned: " + response.getStatusInfo().getReasonPhrase());
 		}
 
 		String reportJSON = response.readEntity( String.class);
@@ -219,7 +219,7 @@ public class RSS2PDFService extends BasicService
 		catch (Exception e)
 		{
 			log.error("Could not create report.", e);
-			return Response.status(Response.Status.BAD_REQUEST).entity("Could not create report").build();
+			return Response.status(Response.Status.BAD_REQUEST).entity( e.getLocalizedMessage()).build();
 		}
 
 		String jobJSON = null;
@@ -236,7 +236,7 @@ public class RSS2PDFService extends BasicService
 		catch (Exception e)
 		{
 			log.error("Could not start docgen.", e);
-			return Response.status(Response.Status.BAD_REQUEST).entity("Could not start docgen job").build();
+			return Response.status(Response.Status.BAD_REQUEST).entity( e.getLocalizedMessage()).build();
 		}
 
 		return Response.ok().entity(jobJSON).build();

@@ -22,12 +22,12 @@
 
 	<div id="centerDiv">
 		<div align="center">
-            <h3>RSS to PDF and/or RPE Template Generator using DGaaS service</h3>
-            <p class="smaller">Enter an RSS feed URL and you can generate a snapshot of your favorite RSS feed in PDF format and also generate a sample RPE template.</p>
+            <h3>Print the news</h3>
+            <p class="smaller">Enter an RSS feed URL and you can generate a snapshot of your favorite RSS feed in PDF format. You can also create a basic RPE template for your data.</p>
 		</div>
 		
 		<label style="margin-right: 10px">RSS Feed URL: </label>
-		<input id="rss" name="rss"  type="text" value="http://feeds.bbci.co.uk/news/world/rss.xml" list="Defaults"/>
+		<input id="rss" name="rss"  type="text" style="height:24px;width:*" value="http://feeds.bbci.co.uk/news/world/rss.xml" list="Defaults"/>
 		
 		<datalist id="Defaults">
     		<option value="http://feeds.bbci.co.uk/news/world/rss.xml">BBC News World</option>
@@ -36,10 +36,11 @@
 			<option value="https://rpe.mybluemix.net/examples/data/requisitepro.xml">Req Pro</option>
 		</datalist>
 
-		<button id="generate_pdf" style="margin-top:10px">Generate PDF</button>
-		<button id="generate_template" style="margin-top:10px">Generate Template and PDF</button>
+		<div align="center">
+			<button id="generate_pdf" style="margin-top:10px">Print PDF</button>
+			<button id="generate_template" style="margin-top:10px">Create Template</button>
+		</div>
 		
-		<br/>
 		<br/>
 		
 		<div id="wrapper">
@@ -47,7 +48,7 @@
 			<div id="progresstext">Ready ...</div>
 		</div>
 		
-		<p><small>Built on DGaaS 2.0</small></p>
+		<p><small>Built on DGaaS 2.0.1</small></p>
 		
 		<div id="results_dialog_pdf" title="PDF Ready" style="text-align: center; margin: 15px;display: none">
    				<a id="download_pdf" href="#">Download PDF</a>
