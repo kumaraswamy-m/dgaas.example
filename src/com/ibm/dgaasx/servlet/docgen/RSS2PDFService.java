@@ -219,7 +219,7 @@ public class RSS2PDFService extends BasicService
 		Report report = null;
 		try
 		{
-			log.info( "Request: " + httpServletRequest.getRequestURI().toString());
+			log.info( "Request: " + httpServletRequest.getRequestURL().toString());
 			report = buildReport( uriInfo, info, rss, templateUrl);
 		}
 		catch (Exception e)
