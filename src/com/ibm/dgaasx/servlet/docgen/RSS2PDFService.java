@@ -216,7 +216,7 @@ public class RSS2PDFService extends BasicService
 		Report report = null;
 		try
 		{
-			log.info("Absolute path is: " + uriInfo.getAbsolutePath());
+			log.info("Request URI: " + uriInfo.getRequestUri());
 			report = buildReport( uriInfo, info, rss, templateUrl);
 		}
 		catch (Exception e)
