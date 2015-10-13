@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -207,7 +208,9 @@ public class RSS2PDFService extends BasicService
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response rss2pdf(@Context UriInfo uriInfo, @QueryParam(value = "rss") String rss,
+	public Response rss2pdf(@Context UriInfo uriInfo,  
+			 				@Context HttpServletRequest httpServletRequest,
+							@QueryParam(value = "rss") String rss,
 							@QueryParam( value = "templateUrl") String templateUrl, 
 							@QueryParam( value = "secret") String secret) throws IOException
 	{
@@ -216,7 +219,7 @@ public class RSS2PDFService extends BasicService
 		Report report = null;
 		try
 		{
-			log.info("Request URI: " + uriInfo.getRequestUri());
+			log.info( "Request: " + httpServletRequest.getRequestURI().toString());
 			report = buildReport( uriInfo, info, rss, templateUrl);
 		}
 		catch (Exception e)
