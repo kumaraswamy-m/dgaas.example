@@ -31,7 +31,6 @@ import com.ibm.dgaasx.servlet.template.RSS2TemplateService;
 import com.ibm.dgaasx.utils.DGaaSXConstants;
 import com.ibm.dgaasx.utils.JSONUtils;
 import com.ibm.rpe.web.service.docgen.api.Parameters;
-import com.ibm.rpe.web.service.docgen.api.model.DocgenJob;
 import com.ibm.rpe.web.service.docgen.api.model.ModifyData;
 import com.ibm.rpe.web.service.docgen.api.model.Report;
 import com.ibm.rpe.web.service.docgen.api.model.ReportTemplate;

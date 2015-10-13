@@ -17,13 +17,12 @@ import com.ibm.dgaasx.servlet.docgen.JobProxyService;
 import com.ibm.dgaasx.servlet.docgen.RSS2PDFService;
 import com.ibm.dgaasx.servlet.docgen.ResultProxyService;
 import com.ibm.dgaasx.servlet.template.RSS2TemplateService;
-import com.ibm.dgaasx.utils.SystemUtils;
 
 @SuppressWarnings("nls")
 // @ApplicationPath("/*")
 public class DGaaSXApplication extends Application
 {
-	private static final String SWAGGER_BASE_PATH = "SWAGGER_BASE_PATH"; //$NON-NLS-1$
+	//private static final String SWAGGER_BASE_PATH = "SWAGGER_BASE_PATH"; //$NON-NLS-1$
 
 	public DGaaSXApplication()
 	{

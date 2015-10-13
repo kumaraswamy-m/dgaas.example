@@ -2,6 +2,7 @@
     <wb-module deploy-name="DGaaSX">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/.apt_generated"/>
         <dependent-module archiveName="com.ibm.rpe.web.service.docgen.api.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/com.ibm.rpe.web.service.docgen.api/com.ibm.rpe.web.service.docgen.api">
             <dependency-type>uses</dependency-type>
         </dependent-module>
