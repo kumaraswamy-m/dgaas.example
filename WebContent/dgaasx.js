@@ -218,8 +218,10 @@ function openSuccessDialog(dialogId, linkId, url)
 
 function generateDocument() {
 	
+	window.alert("In generate document");
+	
 	$( "#progressbar" ).progressbar({value: 0});
-	 $("#progressbar > div").css({ 'background': '#B9C9C8' });
+	$( "#progressbar > div").css({ 'background': '#B9C9C8' });
 	 
 	var rssURL = document.getElementById("rss").value;
 	$( "#progresstext").html("Starting ...");
@@ -242,7 +244,6 @@ function enableDisableButton(el, enabled)
 }
 
 $(document).ready(function(){
-	window.alert( "XXX");
 	$("#generate_pdf").click(generateDocument);
 	$("#generate_template").click(generateTemplate);
 	$("#progressbar").progressbar({value: 0, max: progressMax});
