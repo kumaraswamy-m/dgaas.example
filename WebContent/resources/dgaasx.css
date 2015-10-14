@@ -10,6 +10,7 @@ body
 }
 
 #centerDiv {
+	
 	width: 90%;
 	
 	margin:0 auto;
@@ -24,6 +25,13 @@ body
 	XXX-left: 35%;
 	XXX-margin: -100px 0 0 -150px;
 	XXX-box-shadow: 10px 10px 5px #888888;
+}
+
+
+@media screen and (min-width: 600px) {
+	#centerDiv {	
+		width: 40%;
+	}
 }
 
 .logo {
