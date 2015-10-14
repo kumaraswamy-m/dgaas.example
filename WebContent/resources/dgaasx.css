@@ -6,11 +6,11 @@ body
 
 
 .spacer {
-	margin-top:50px;
+	margin-top:25px;
 }
 
 #centerDiv {
-	width: 80%;
+	width: 90%;
 	
 	margin:0 auto;
 	border: 1px solid;
@@ -46,7 +46,7 @@ H3 {
 }
 
 .form-content {
-	padding: 10px;
+	padding: 5px;
 	padding-top: 40px;
 	background-color: #C6D7D7;
 }
