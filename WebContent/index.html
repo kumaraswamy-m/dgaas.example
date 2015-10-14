@@ -23,16 +23,21 @@
 	<div style="margin-top:200px"></div>
 	<div id="centerDiv">
 		
-		<img src="dgaas.png" class="logo"></img>
-		
-		<div align="center" class="header">
-            <h3>Print the News</h3>
-            <p class="subtitle">Input an RSS feed URL to take a snapshot of your favorite RSS feed in PDF format.</p>
-		</div>
+		<table>
+				<tr>
+            		<td>
+            			<img src="dgaas.png" class="logo"></img>
+            		</td>
+					<td>
+						<h3>Print the News</h3>
+           				<p class="subtitle">Input an RSS feed URL to take a snapshot of your favorite RSS feed in PDF format.</p>
+            		</td>
+            	</tr>
+        </table>
 		
 		<div class="form-content">
-			<label style="margin-right: 10px">RSS Feed URL: </label>
-			<input id="rss" name="rss"  type="text" style="height:24px;width:*" value="http://feeds.bbci.co.uk/news/world/rss.xml" list="Defaults"/>
+			<label style="display:table-cell; margin-right: 10px">RSS Feed URL: </label>
+			<input id="rss" name="rss"  type="text" value="http://feeds.bbci.co.uk/news/world/rss.xml" list="Defaults"/>
 			
 			<datalist id="Defaults">
 	    		<option value="http://feeds.bbci.co.uk/news/world/rss.xml">BBC News World</option>

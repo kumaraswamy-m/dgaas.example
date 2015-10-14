@@ -217,6 +217,9 @@ function openSuccessDialog(dialogId, linkId, url)
 }
 
 function generateDocument() {
+	
+	window.alert("Command received"); 
+	
 	$( "#progressbar" ).progressbar({value: 0});
 	 $("#progressbar > div").css({ 'background': '#B9C9C8' });
 	 
