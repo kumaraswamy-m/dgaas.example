@@ -250,5 +250,6 @@ $(document).ready(function(){
 	
 	$('#generate_template').css('cursor','pointer');
 	$("#generate_template").click(generateTemplate);
+	
 	$("#progressbar").progressbar({value: 0, max: progressMax});
 }); 
