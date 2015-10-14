@@ -218,8 +218,6 @@ function openSuccessDialog(dialogId, linkId, url)
 
 function generateDocument() {
 	
-	window.alert("Command received"); 
-	
 	$( "#progressbar" ).progressbar({value: 0});
 	 $("#progressbar > div").css({ 'background': '#B9C9C8' });
 	 
@@ -243,9 +241,9 @@ function enableDisableButton(el, enabled)
 	$(el).prop('disabled', !enabled);
 }
 
-function initialize() 
-{
+$(document).ready(function(){
+	window.alert( "XXX");
 	$("#generate_pdf").click(generateDocument);
 	$("#generate_template").click(generateTemplate);
 	$("#progressbar").progressbar({value: 0, max: progressMax});
-}
+}); 
