@@ -31,12 +31,12 @@ body
 	margin-top: 15px;
 }
 
-table {
-	withd: 100%;
+.header {
+	width: 100%;
 	border: 0;
 }
 	
-td {
+.header td {
 	margin: 3px;
 	text-align: center;
 }
