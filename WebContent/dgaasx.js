@@ -244,7 +244,11 @@ function enableDisableButton(el, enabled)
 }
 
 $(document).ready(function(){
+	
+	$('#generate_pdf').css('cursor','pointer');
 	$("#generate_pdf").click(generateDocument);
+	
+	$('#generate_template').css('cursor','pointer');
 	$("#generate_template").click(generateTemplate);
 	$("#progressbar").progressbar({value: 0, max: progressMax});
 }); 

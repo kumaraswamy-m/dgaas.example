@@ -5,21 +5,12 @@ body
 }
 
 
-
-	
-@media screen and (max-device-width: 600px) {
-	.spacer {
-		margin-top:50px;
-	}
-}	
-	
-@media screen and (min-device-width: 600px) {
-	.spacer {
-		margin-top:200px;
-	}
+.spacer {
+	margin-top:50px;
 }
 
 #centerDiv {
+	width: 80%;
 	
 	margin:0 auto;
 	border: 1px solid;
@@ -33,12 +24,6 @@ body
 	XXX-left: 35%;
 	XXX-margin: -100px 0 0 -150px;
 	XXX-box-shadow: 10px 10px 5px #888888;
-}
-
-@media screen and (min-device-width: 600px) {
-	#centerDiv {
-		width: 40%;
-	}
 }
 
 .logo {
