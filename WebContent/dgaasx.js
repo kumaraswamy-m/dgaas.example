@@ -25,14 +25,20 @@ String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
+String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
+
 function getServiceUrl(serviceType) {
-	var url = location.href;
+	
+	var url = window.location.href;
+	
 	if(url.endsWith('/')) {
 		url += 'api/' + serviceType;
 	} else {
 		url += '/api/' + serviceType;
 	}
-	
+
 	return url;
 }
 
@@ -43,6 +49,7 @@ function monitorReport(jobURL, templateURL)
 	
 	$.ajax({
 		type: "GET",
+		cache: false,
 		url: jobURL,
 		xhrFields: {
 			 withCredentials: true
@@ -50,6 +57,7 @@ function monitorReport(jobURL, templateURL)
 		dataType: "json",
 		success: function (job) {
 			$( "#progresstext").html(job.status.capitalize() + "...");
+			
 			if (job.status.toUpperCase() == "FINISHED")
 			{
 				if(templateURL) {
@@ -95,6 +103,7 @@ function runReport(rssURL, templateURL)
 	if(templateURL) {
 		url += '&templateUrl=' + templateURL;
 	}
+	
 	$.ajax({
 		type: "POST",
 		url:  url,
@@ -218,16 +227,15 @@ function openSuccessDialog(dialogId, linkId, url)
 
 function generateDocument() {
 	
-	window.alert("In generate document");
-	
 	$( "#progressbar" ).progressbar({value: 0});
 	$( "#progressbar > div").css({ 'background': '#B9C9C8' });
-	 
+	
 	var rssURL = document.getElementById("rss").value;
 	$( "#progresstext").html("Starting ...");
 	enableDisableButton('#generate_template', false);
 	enableDisableButton('#generate_pdf', false);
-	runReport(rssURL);
+	
+	runReport(rssURL, null);
 }
 
 function generateTemplate() {
