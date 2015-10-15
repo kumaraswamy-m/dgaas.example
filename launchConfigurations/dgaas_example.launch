@@ -10,7 +10,7 @@
         },
         "Name": "dgaas_example",
         "Target": {
-            "Org": "ddc",
+            "Org": "kumarasm@in.ibm.com",
             "Space": "dev",
             "Url": "https://api.ng.bluemix.net"
         },

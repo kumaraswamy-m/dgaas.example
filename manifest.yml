@@ -1,6 +1,6 @@
 ---
 applications:
-- name:   dgaas-example
+- name:   dgaasx-kmg
   memory: 512M
   path:   target/DGaaSX-2.0.1.war
 
